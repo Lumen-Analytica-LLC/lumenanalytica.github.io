@@ -1,0 +1,166 @@
+---
+const defaultImages = [
+  { src: '/assets/graphs/graph1.svg', alt: 'Monthly revenue (bar chart)' },
+  { src: '/assets/graphs/graph2.svg', alt: 'Cumulative returns (line chart)' },
+  { src: '/assets/graphs/graph3.svg', alt: 'Expense breakdown (pie chart)' },
+  { src: '/assets/graphs/graph4.svg', alt: 'Forecast vs actual (area chart)' }
+];
+
+// Allow passing `images` and `interval` props. `interval` is milliseconds.
+const images = Astro.props.images ?? defaultImages;
+const interval = Number(Astro.props.interval ?? 5000);
+---
+
+<div class="carousel" aria-roledescription="carousel" data-interval={interval}>
+  <div class="slides">
+    {images.map((img, i) => (
+      <figure class={`slide ${i === 0 ? 'active' : ''}`} data-index={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+        <img src={img.src} alt={img.alt} loading="lazy" />
+      </figure>
+    ))}
+  </div>
+
+  <button type="button" class="nav prev" aria-label="Previous slide">‹</button>
+  <button type="button" class="nav next" aria-label="Next slide">›</button>
+
+  <div class="dots">
+    {images.map((_, i) => (
+      <button type="button" class={`dot ${i === 0 ? 'active' : ''}`} data-index={i} aria-label={`Go to slide ${i + 1}`}></button>
+    ))}
+  </div>
+
+  <script type="module">
+    // Lightweight carousel logic
+    // `document.currentScript` can be `null` in some browser/module loading scenarios.
+    // Try a safe fallback: find the last module <script> that lives inside a `.carousel`.
+    const scriptEl = document.currentScript || Array.from(document.querySelectorAll('script[type="module"]')).reverse().find(s => s.closest('.carousel'));
+    const root = scriptEl ? scriptEl.closest('.carousel') : document.querySelector('.carousel');
+    if (!root) throw new Error('Carousel root not found');
+
+    const slides = Array.from(root.querySelectorAll('.slide'));
+    const prevBtn = root.querySelector('.nav.prev');
+    const nextBtn = root.querySelector('.nav.next');
+    const dots = Array.from(root.querySelectorAll('.dot'));
+    // start with the slide that is marked active in the markup (fallback to 0)
+    let idx = slides.findIndex(s => s.classList.contains('active'));
+    if (idx === -1) idx = 0;
+    let timer = null;
+    const AUTO_MS = Number(root.dataset.interval) || 5000;
+
+    function show(index) {
+      slides.forEach((s, i) => {
+        const active = i === index;
+        s.classList.toggle('active', active);
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      idx = index;
+    }
+
+    function next() { show((idx + 1) % slides.length); }
+    function prev() { show((idx - 1 + slides.length) % slides.length); }
+
+    if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartTimer(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartTimer(); });
+    dots.forEach((d) => d.addEventListener('click', (e) => { show(Number(e.currentTarget.dataset.index)); restartTimer(); }));
+
+    function startTimer() { if (slides.length > 1) timer = setInterval(next, AUTO_MS); }
+    function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+    function restartTimer() { stopTimer(); startTimer(); }
+
+    // Pause on hover/focus for accessibility
+    root.addEventListener('pointerenter', stopTimer);
+    root.addEventListener('pointerleave', startTimer);
+    root.addEventListener('focusin', stopTimer);
+    root.addEventListener('focusout', startTimer);
+
+    // Keyboard navigation
+    root.setAttribute('tabindex', '0');
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { next(); restartTimer(); }
+      if (e.key === 'ArrowLeft') { prev(); restartTimer(); }
+    });
+
+    // ensure initial UI state reflects `idx`
+    show(idx);
+
+    // debug info (remove or disable in production if verbose)
+    console.debug('carousel:init', { slides: slides.length, dots: dots.length, idx, AUTO_MS });
+
+    // start
+    if (slides.length > 1) startTimer();
+  </script>
+
+<style>
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  overflow: visible;
+}
+
+.slides {
+  position: relative;
+  height: auto;
+}
+
+.slide {
+  display: none;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.slide.active {
+  display: block;
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-md);
+  object-fit: cover;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.nav.prev { left: -0.75rem; }
+.nav.next { right: -0.75rem; }
+
+.dots {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--gray-700);
+  background: var(--bg);
+  opacity: 0.6;
+}
+
+.dot.active { background: var(--accent); opacity: 1; }
+
+@media (min-width: 50em) {
+  .carousel { max-width: 360px; }
+  .nav.prev { left: -1.25rem; }
+  .nav.next { right: -1.25rem; }
+}
+</style>

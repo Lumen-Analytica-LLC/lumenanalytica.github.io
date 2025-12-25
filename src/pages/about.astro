@@ -1,0 +1,120 @@
+---
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About | Lumen Analytica" description="About Lumen Analytica and our background">
+	<div class="stack gap-20">
+		<main class="wrapper about">
+			<Hero
+				title="About"
+				tagline="If our values align, we'd love to hear from you."
+			>
+			</Hero>
+
+			<section>
+				<h2 class="section-title">Background</h2>
+				<div class="content">
+					<p>
+						At Lumen Analytica, we help organizations turn data into smarter decisions. While our company is new, our experience runs deep—over 20 years delivering operational excellence across higher education, healthcare, supply chain, and service organizations.
+					</p>
+					<p>
+						<br/>We combine real-world expertise with cutting-edge methods in operations, simulation, and machine learning to solve complex problems and deliver measurable impact. Our approach blends rigor and practicality: rigorous experimentation uncovers insights, and practical strategies ensure they translate into results.
+					</p>
+					<p>
+						<br />We partner with clients to tackle challenges that matter most, transforming data into actionable decisions that drive performance and innovation.
+					</p>
+				</div>
+			</section>
+			<section>
+				<h2 class="section-title">Regulatory</h2>
+				<div class="content">
+					<p>
+						In data-driven organizations, trust is earned through compliance. We help clients navigate data protection and regulatory responsibility with clarity and confidence. Whether aligning with HIPAA, FERPA, GDPR, or SOC 2, our approach embeds compliance into the fabric of architecture and operations—so it strengthens innovation rather than constrains it.
+					</p>
+					<p>
+						<br/>We translate complex requirements into practical controls, ensuring governance, security, and transparency work together seamlessly. Our frameworks emphasize proactive compliance—anticipating change, reducing risk, and maintaining trust.
+					</p>
+					<p>
+						<br/>In a world where data moves faster than policy, compliance is more than a checklist—it’s a mindset that protects both data and the people it represents.
+					</p>
+				</div>
+			</section>
+			<section>
+				<h2 class="section-title">Governance</h2>
+				<div class="content">
+					<p>
+						Strong governance turns data from a byproduct into a strategic asset. We view governance not as bureaucracy, but as the quiet architecture that gives organizations confidence in every decision they make. It’s about protecting trust—ensuring data is accurate, consistent, and available when it’s needed most.
+					</p>
+					<p>
+						<br/>Whether data lives in the cloud, on-premises, or across hybrid environments, we design frameworks that anticipate disruption and preserve continuity. Redundancy and recovery aren’t afterthoughts—they’re built in from the start.
+					</p>				
+					<p>
+						<br/>True governance is less about control and more about stewardship. It balances innovation with responsibility, ensuring that as technology evolves, data remains dependable, secure, and aligned with mission and purpose.
+					</p>
+				</div>
+			</section>
+		</main>
+
+		<ContactCTA />
+	</div>
+</BaseLayout>
+
+<style>
+	.about {
+		display: flex;
+		flex-direction: column;
+		gap: 3.5rem;
+	}
+
+	img {
+		margin-top: 1.5rem;
+		border-radius: 1.5rem;
+		box-shadow: var(--shadow-md);
+	}
+
+	section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		color: var(--gray-200);
+	}
+
+	.section-title {
+		grid-column-start: 1;
+		font-size: var(--text-xl);
+		color: var(--gray-0);
+	}
+
+	.content {
+		grid-column: 2 / 4;
+	}
+
+	.content :global(a) {
+		text-decoration: 1px solid underline transparent;
+		text-underline-offset: 0.25em;
+		transition: text-decoration-color var(--theme-transition);
+	}
+
+	.content :global(a:hover),
+	.content :global(a:focus) {
+		text-decoration-color: currentColor;
+	}
+
+	@media (min-width: 50em) {
+		.about {
+			display: grid;
+			grid-template-columns: 1fr 60% 1fr;
+		}
+
+		.about > :global(:first-child) {
+			grid-column-start: 2;
+		}
+
+		section {
+			display: contents;
+			font-size: var(--text-lg);
+		}
+	}
+</style>

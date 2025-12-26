@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
-  <rect width="100%" height="100%" fill="#081228" />
-  <text x="40" y="40" fill="#94a3b8" font-size="18">Forecast vs Actual</text>
-  <g transform="translate(40,80)">
-    <path d="M0 320 L80 280 L160 260 L240 220 L320 200 L400 180 L480 140 L560 120" stroke="#60a5fa" stroke-width="6" fill="none" stroke-linejoin="round"/>
-    <path d="M0 360 L80 340 L160 300 L240 260 L320 240 L400 220 L480 200 L560 180" stroke="#f97316" stroke-width="6" stroke-dasharray="8 6" fill="none"/>
-  </g>
-</svg>

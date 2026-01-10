@@ -28,31 +28,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 				</div>
 			</section>
 			<section>
-				<h2 class="section-title">Regulatory</h2>
+				<h2 class="section-title">Contact</h2>
 				<div class="content">
-					<p>
-						In data-driven organizations, trust is earned through compliance. We help clients navigate data protection and regulatory responsibility with clarity and confidence. Whether aligning with HIPAA, FERPA, GDPR, or SOC 2, our approach embeds compliance into the fabric of architecture and operations—so it strengthens innovation rather than constrains it.
-					</p>
-					<p>
-						<br/>We translate complex requirements into practical controls, ensuring governance, security, and transparency work together seamlessly. Our frameworks emphasize proactive compliance—anticipating change, reducing risk, and maintaining trust.
-					</p>
-					<p>
-						<br/>In a world where data moves faster than policy, compliance is more than a checklist—it’s a mindset that protects both data and the people it represents.
-					</p>
-				</div>
-			</section>
-			<section>
-				<h2 class="section-title">Governance</h2>
-				<div class="content">
-					<p>
-						Strong governance turns data from a byproduct into a strategic asset. We view governance not as bureaucracy, but as the quiet architecture that gives organizations confidence in every decision they make. It’s about protecting trust—ensuring data is accurate, consistent, and available when it’s needed most.
-					</p>
-					<p>
-						<br/>Whether data lives in the cloud, on-premises, or across hybrid environments, we design frameworks that anticipate disruption and preserve continuity. Redundancy and recovery aren’t afterthoughts—they’re built in from the start.
-					</p>				
-					<p>
-						<br/>True governance is less about control and more about stewardship. It balances innovation with responsibility, ensuring that as technology evolves, data remains dependable, secure, and aligned with mission and purpose.
-					</p>
+					<table class="contact-table">
+						<tr>
+							<td class="label">Email</td>
+							<td><a href="mailto:insights@lumenanalytica.io">insights@lumenanalytica.io</a></td>
+						</tr>
+						<tr>
+							<td class="label">Address</td>
+							<td>P.O. Box XXXX</td>
+						</tr>
+						<tr>
+							<td class="label">Location</td>
+							<td>McAllen, Texas - 78501</td>
+						</tr>
+						<tr>
+							<td class="label">Business Hours</td>
+							<td>Monday - Friday, 9:00 AM - 5:00 PM CST</td>
+						</tr>
+					</table>
 				</div>
 			</section>
 		</main>
@@ -100,6 +95,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 	.content :global(a:hover),
 	.content :global(a:focus) {
 		text-decoration-color: currentColor;
+	}
+
+	.contact-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 1rem;
+	}
+
+	.contact-table tr {
+		border-bottom: 1px solid var(--gray-800);
+	}
+
+	.contact-table td {
+		padding: 0.75rem 0;
+	}
+
+	.contact-table .label {
+		font-weight: 600;
+		color: var(--gray-0);
+		padding-right: 2rem;
+		white-space: nowrap;
+		width: 150px;
 	}
 
 	@media (min-width: 50em) {

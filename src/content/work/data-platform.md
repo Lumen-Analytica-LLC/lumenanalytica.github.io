@@ -4,16 +4,16 @@ publishDate: 2019-10-02 00:00:00
 img: /assets/data-platform.svg
 img_alt: Soft pink and baby blue water ripples together in a subtle texture.
 description: |
-  We developed brand positioning and design assets for the launch
-  of a new colored water product.
+  Build a scalable data warehouse that centralizes business data from multiple sources, enabling self-service analytics and data-driven decision-making across your organization.
 tags:
-  - Design
-  - Branding
+  - Data Warehousing
+  - Analytics
+  - Business Intelligence
 ---
 
 Our Managed-Data Platform service provides organizations with a scalable, secure, and high-performance platform for centralizing, integrating, and analyzing business data. We design and implement modern data warehouse solutions tailored to your business needs, enabling advanced analytics, reporting, and data-driven decision-making.
 
-**The advantages for the platform**
+**The advantages for the platform:**
 
 QuickBooks is excellent at what it does — it’s your system of record for accounting. It gives you standardized financial reports that are reliable, compliant, and easy for finance teams to use. But QuickBooks wasn’t designed to answer broader business questions like customer behavior, operational performance, or revenue analytics across multiple systems.
 
@@ -25,7 +25,7 @@ The data warehouse is the engine behind all of this — it unifies QuickBooks wi
 
 Together, QuickBooks + DW + Metabase give you the best of both worlds: accurate accounting data with enterprise-grade analytics that drive strategy, efficiency, and smarter decisions.
 
-**Statement of Work**
+**Statement of Work:**
 
 - Collaborate with stakeholders to define business objectives, data sources, and integration needs.
 - Develop a data warehouse architecture that supports scalability, security, and performance.

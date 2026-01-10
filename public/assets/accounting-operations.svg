@@ -1,0 +1,328 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1472" height="871" viewBox="0 0 1472 871">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0891b2;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0" />
+      <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="softShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.2"/>
+    </filter>
+    
+    <!-- Patterns -->
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#94a3b8" opacity="0.1"/>
+    </pattern>
+    
+    <clipPath id="circleClip">
+      <circle cx="120" cy="120" r="110"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+  <rect width="100%" height="100%" fill="url(#dots)"/>
+  
+  <!-- Decorative glow lines -->
+  <line x1="0" y1="150" x2="1472" y2="200" stroke="url(#glowGradient)" stroke-width="2" opacity="0.5"/>
+  <line x1="0" y1="650" x2="1472" y2="700" stroke="url(#glowGradient)" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Main Content Container -->
+  <g transform="translate(80,60)">
+    
+    <!-- Left Section: Financial Dashboard -->
+    <g transform="translate(0,0)">
+      <text x="0" y="0" fill="#f1f5f9" font-size="36" font-weight="bold">Accounting Operations</text>
+      <text x="0" y="40" fill="#94a3b8" font-size="18">Real-time Financial Management &amp; Analytics</text>
+      
+      <!-- Dashboard Cards -->
+      <g transform="translate(0,80)">
+        <!-- Card 1: General Ledger -->
+        <rect x="0" y="0" width="320" height="160" rx="12" fill="#1e293b" filter="url(#shadow)"/>
+        <g transform="translate(20,30)">
+          <circle cx="25" cy="25" r="25" fill="url(#accentGradient1)" opacity="0.2"/>
+          <path d="M 15 25 L 25 15 L 35 25 L 25 35 Z" fill="#06b6d4" filter="url(#glow)"/>
+          <text x="65" y="20" fill="#f1f5f9" font-size="18" font-weight="bold">General Ledger</text>
+          <text x="65" y="40" fill="#64748b" font-size="13">Chart of Accounts</text>
+        </g>
+        <g transform="translate(20,90)">
+          <text x="0" y="0" fill="#94a3b8" font-size="12">Active Accounts</text>
+          <text x="0" y="25" fill="#06b6d4" font-size="28" font-weight="bold">1,247</text>
+          <text x="150" y="0" fill="#94a3b8" font-size="12">Last Updated</text>
+          <text x="150" y="25" fill="#64748b" font-size="14">2 mins ago</text>
+        </g>
+        
+        <!-- Card 2: Accounts Payable -->
+        <rect x="350" y="0" width="320" height="160" rx="12" fill="#1e293b" filter="url(#shadow)"/>
+        <g transform="translate(370,30)">
+          <circle cx="25" cy="25" r="25" fill="url(#accentGradient2)" opacity="0.2"/>
+          <rect x="15" y="15" width="20" height="20" rx="3" fill="#ec4899" filter="url(#glow)"/>
+          <text x="65" y="20" fill="#f1f5f9" font-size="18" font-weight="bold">Accounts Payable</text>
+          <text x="65" y="40" fill="#64748b" font-size="13">Vendor Management</text>
+        </g>
+        <g transform="translate(370,90)">
+          <text x="0" y="0" fill="#94a3b8" font-size="12">Outstanding</text>
+          <text x="0" y="25" fill="#ec4899" font-size="28" font-weight="bold">$847K</text>
+          <text x="150" y="0" fill="#94a3b8" font-size="12">Due This Month</text>
+          <text x="150" y="25" fill="#fbbf24" font-size="20" font-weight="bold">$234K</text>
+        </g>
+        
+        <!-- Card 3: Accounts Receivable -->
+        <rect x="0" y="185" width="320" height="160" rx="12" fill="#1e293b" filter="url(#shadow)"/>
+        <g transform="translate(20,215)">
+          <circle cx="25" cy="25" r="25" fill="url(#accentGradient3)" opacity="0.2"/>
+          <path d="M 15 25 L 20 20 L 35 20 L 35 30 L 20 30 Z" fill="#8b5cf6" filter="url(#glow)"/>
+          <text x="65" y="20" fill="#f1f5f9" font-size="18" font-weight="bold">Accounts Receivable</text>
+          <text x="65" y="40" fill="#64748b" font-size="13">Customer Invoicing</text>
+        </g>
+        <g transform="translate(20,275)">
+          <text x="0" y="0" fill="#94a3b8" font-size="12">Outstanding</text>
+          <text x="0" y="25" fill="#8b5cf6" font-size="28" font-weight="bold">$1.2M</text>
+          <text x="150" y="0" fill="#94a3b8" font-size="12">Overdue</text>
+          <text x="150" y="25" fill="#ef4444" font-size="20" font-weight="bold">$87K</text>
+        </g>
+        
+        <!-- Card 4: Bank Reconciliation -->
+        <rect x="350" y="185" width="320" height="160" rx="12" fill="#1e293b" filter="url(#shadow)"/>
+        <g transform="translate(370,215)">
+          <circle cx="25" cy="25" r="25" fill="url(#accentGradient1)" opacity="0.2"/>
+          <circle cx="25" cy="25" r="12" fill="none" stroke="#06b6d4" stroke-width="3" filter="url(#glow)"/>
+          <path d="M 25 19 L 25 25 L 30 28" stroke="#06b6d4" stroke-width="2" fill="none"/>
+          <text x="65" y="20" fill="#f1f5f9" font-size="18" font-weight="bold">Bank Reconciliation</text>
+          <text x="65" y="40" fill="#64748b" font-size="13">Automated Matching</text>
+        </g>
+        <g transform="translate(370,275)">
+          <text x="0" y="0" fill="#94a3b8" font-size="12">Reconciled</text>
+          <text x="0" y="25" fill="#10b981" font-size="28" font-weight="bold">98.7%</text>
+          <text x="150" y="0" fill="#94a3b8" font-size="12">Pending Items</text>
+          <text x="150" y="25" fill="#fbbf24" font-size="20" font-weight="bold">23</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Center Section: Financial Flow Diagram -->
+    <g transform="translate(750,100)">
+      <!-- Central Hub -->
+      <circle cx="140" cy="240" r="70" fill="#1e293b" filter="url(#shadow)"/>
+      <circle cx="140" cy="240" r="55" fill="url(#accentGradient1)"/>
+      <text x="140" y="235" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="bold">FINANCIAL</text>
+      <text x="140" y="255" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="bold">CORE</text>
+      
+      <!-- Node: Transactions -->
+      <g transform="translate(0,0)">
+        <line x1="140" y1="240" x2="80" y2="100" stroke="#06b6d4" stroke-width="3" opacity="0.5" stroke-dasharray="5,5"/>
+        <circle cx="80" cy="100" r="45" fill="#1e293b" filter="url(#softShadow)"/>
+        <circle cx="80" cy="100" r="35" fill="#0891b2" opacity="0.3"/>
+        <text x="80" y="90" text-anchor="middle" fill="#06b6d4" font-size="32" font-weight="bold">$</text>
+        <text x="80" y="110" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Transaction</text>
+        <text x="80" y="123" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Processing</text>
+      </g>
+      
+      <!-- Node: Reporting -->
+      <g transform="translate(0,0)">
+        <line x1="140" y1="240" x2="200" y2="100" stroke="#ec4899" stroke-width="3" opacity="0.5" stroke-dasharray="5,5"/>
+        <circle cx="200" cy="100" r="45" fill="#1e293b" filter="url(#softShadow)"/>
+        <circle cx="200" cy="100" r="35" fill="#db2777" opacity="0.3"/>
+        <path d="M 185 95 L 185 110 L 195 107 L 205 110 L 215 105 L 215 95 Z" fill="#ec4899" opacity="0.8"/>
+        <text x="200" y="110" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Financial</text>
+        <text x="200" y="123" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Reporting</text>
+      </g>
+      
+      <!-- Node: Compliance -->
+      <g transform="translate(0,0)">
+        <line x1="140" y1="240" x2="280" y2="240" stroke="#8b5cf6" stroke-width="3" opacity="0.5" stroke-dasharray="5,5"/>
+        <circle cx="280" cy="240" r="45" fill="#1e293b" filter="url(#softShadow)"/>
+        <circle cx="280" cy="240" r="35" fill="#7c3aed" opacity="0.3"/>
+        <path d="M 270 240 L 278 248 L 295 228" stroke="#8b5cf6" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <text x="280" y="258" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Tax &amp;</text>
+        <text x="280" y="271" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Compliance</text>
+      </g>
+      
+      <!-- Node: Audit Trail -->
+      <g transform="translate(0,0)">
+        <line x1="140" y1="240" x2="80" y2="380" stroke="#10b981" stroke-width="3" opacity="0.5" stroke-dasharray="5,5"/>
+        <circle cx="80" cy="380" r="45" fill="#1e293b" filter="url(#softShadow)"/>
+        <circle cx="80" cy="380" r="35" fill="#059669" opacity="0.3"/>
+        <rect x="65" y="370" width="30" height="20" rx="2" fill="none" stroke="#10b981" stroke-width="2.5"/>
+        <line x1="70" y1="375" x2="85" y2="375" stroke="#10b981" stroke-width="2"/>
+        <line x1="70" y1="380" x2="85" y2="380" stroke="#10b981" stroke-width="2"/>
+        <text x="80" y="401" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Audit</text>
+        <text x="80" y="414" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Trail</text>
+      </g>
+      
+      <!-- Node: Analytics -->
+      <g transform="translate(0,0)">
+        <line x1="140" y1="240" x2="200" y2="380" stroke="#f59e0b" stroke-width="3" opacity="0.5" stroke-dasharray="5,5"/>
+        <circle cx="200" cy="380" r="45" fill="#1e293b" filter="url(#softShadow)"/>
+        <circle cx="200" cy="380" r="35" fill="#d97706" opacity="0.3"/>
+        <path d="M 185 390 L 190 385 L 195 388 L 200 380 L 205 383 L 210 378 L 215 382" stroke="#f59e0b" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <text x="200" y="401" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Business</text>
+        <text x="200" y="414" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Analytics</text>
+      </g>
+    </g>
+    
+    <!-- Right Section: Key Features List -->
+    <g transform="translate(1050,80)">
+      <text x="0" y="0" fill="#f1f5f9" font-size="24" font-weight="bold">Core Features</text>
+      
+      <!-- Feature 1 -->
+      <g transform="translate(0,40)">
+        <circle cx="12" cy="12" r="12" fill="#06b6d4" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#06b6d4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Automated Journal Entries</text>
+      </g>
+      
+      <!-- Feature 2 -->
+      <g transform="translate(0,75)">
+        <circle cx="12" cy="12" r="12" fill="#ec4899" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Multi-Currency Support</text>
+      </g>
+      
+      <!-- Feature 3 -->
+      <g transform="translate(0,110)">
+        <circle cx="12" cy="12" r="12" fill="#8b5cf6" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Real-time Reporting</text>
+      </g>
+      
+      <!-- Feature 4 -->
+      <g transform="translate(0,145)">
+        <circle cx="12" cy="12" r="12" fill="#10b981" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#10b981" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Period Close Management</text>
+      </g>
+      
+      <!-- Feature 5 -->
+      <g transform="translate(0,180)">
+        <circle cx="12" cy="12" r="12" fill="#f59e0b" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Budget vs. Actual Analysis</text>
+      </g>
+      
+      <!-- Feature 6 -->
+      <g transform="translate(0,215)">
+        <circle cx="12" cy="12" r="12" fill="#06b6d4" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#06b6d4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Intercompany Accounting</text>
+      </g>
+      
+      <!-- Feature 7 -->
+      <g transform="translate(0,250)">
+        <circle cx="12" cy="12" r="12" fill="#ec4899" opacity="0.2"/>
+        <path d="M 8 12 L 11 15 L 17 9" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="35" y="17" fill="#e2e8f0" font-size="15" font-weight="500">Fixed Asset Management</text>
+      </g>
+      
+      <!-- Integration Section -->
+      <g transform="translate(0,310)">
+        <text x="0" y="0" fill="#f1f5f9" font-size="20" font-weight="bold">Integrations</text>
+        
+        <g transform="translate(0,30)">
+          <rect x="0" y="0" width="280" height="45" rx="8" fill="#1e293b" opacity="0.5"/>
+          <text x="15" y="17" fill="#94a3b8" font-size="12">ERP SYSTEMS</text>
+          <text x="15" y="35" fill="#06b6d4" font-size="14" font-weight="500">SAP • Oracle • NetSuite • Dynamics</text>
+        </g>
+        
+        <g transform="translate(0,60)">
+          <rect x="0" y="0" width="280" height="45" rx="8" fill="#1e293b" opacity="0.5"/>
+          <text x="15" y="17" fill="#94a3b8" font-size="12">BANKING</text>
+          <text x="15" y="35" fill="#ec4899" font-size="14" font-weight="500">Direct Bank Feeds • SWIFT</text>
+        </g>
+        
+        <g transform="translate(0,120)">
+          <rect x="0" y="0" width="280" height="85" rx="8" fill="#1e293b" opacity="0.8"/>
+          <text x="140" y="30" text-anchor="middle" fill="#94a3b8" font-size="13">COMPLIANCE STANDARDS</text>
+          <g transform="translate(20,45)">
+            <circle cx="4" cy="4" r="3" fill="#10b981"/>
+            <text x="15" y="8" fill="#e2e8f0" font-size="12">GAAP / IFRS</text>
+          </g>
+          <g transform="translate(135,45)">
+            <circle cx="4" cy="4" r="3" fill="#10b981"/>
+            <text x="15" y="8" fill="#e2e8f0" font-size="12">SOX</text>
+          </g>
+          <g transform="translate(20,63)">
+            <circle cx="4" cy="4" r="3" fill="#10b981"/>
+            <text x="15" y="8" fill="#e2e8f0" font-size="12">SOC 2</text>
+          </g>
+          <g transform="translate(135,63)">
+            <circle cx="4" cy="4" r="3" fill="#10b981"/>
+            <text x="15" y="8" fill="#e2e8f0" font-size="12">GDPR</text>
+          </g>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Bottom Stats Bar -->
+    <g transform="translate(0,640)">
+      <rect x="0" y="0" width="1310" height="90" rx="12" fill="#1e293b" opacity="0.6" filter="url(#softShadow)"/>
+      
+      <g transform="translate(60,30)">
+        <text x="0" y="0" fill="#94a3b8" font-size="12">DAILY TRANSACTIONS</text>
+        <text x="0" y="30" fill="#06b6d4" font-size="24" font-weight="bold">12,847</text>
+      </g>
+      
+      <g transform="translate(340,30)">
+        <text x="0" y="0" fill="#94a3b8" font-size="12">PROCESSING TIME</text>
+        <text x="0" y="30" fill="#10b981" font-size="24" font-weight="bold">1.2s avg</text>
+      </g>
+      
+      <g transform="translate(620,30)">
+        <text x="0" y="0" fill="#94a3b8" font-size="12">ACCURACY RATE</text>
+        <text x="0" y="30" fill="#8b5cf6" font-size="24" font-weight="bold">99.97%</text>
+      </g>
+      
+      <g transform="translate(900,30)">
+        <text x="0" y="0" fill="#94a3b8" font-size="12">ACTIVE USERS</text>
+        <text x="0" y="30" fill="#ec4899" font-size="24" font-weight="bold">1,834</text>
+      </g>
+      
+      <g transform="translate(1150,30)">
+        <text x="0" y="0" fill="#94a3b8" font-size="12">UPTIME</text>
+        <text x="0" y="30" fill="#f59e0b" font-size="24" font-weight="bold">99.99%</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <circle cx="100" cy="100" r="60" fill="#06b6d4" opacity="0.05"/>
+  <circle cx="1372" cy="771" r="80" fill="#ec4899" opacity="0.05"/>
+  <circle cx="1372" cy="100" r="50" fill="#8b5cf6" opacity="0.05"/>
+  
+</svg>

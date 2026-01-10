@@ -1,0 +1,337 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1472" height="871" viewBox="0 0 1472 871">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.15" />
+      <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.12" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.15" />
+    </linearGradient>
+    
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:0.95" />
+    </linearGradient>
+    
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0" />
+      <stop offset="30%" style="stop-color:#06b6d4;stop-opacity:0.4" />
+      <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.4" />
+      <stop offset="70%" style="stop-color:#8b5cf6;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.15"/>
+    </filter>
+    
+    <filter id="softShadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.12"/>
+    </filter>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f1f5f9"/>
+  <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative waves -->
+  <path d="M 0 200 Q 368 180 736 200 T 1472 200" stroke="url(#waveGradient)" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M 0 650 Q 368 670 736 650 T 1472 650" stroke="url(#waveGradient)" stroke-width="3" fill="none" opacity="0.5"/>
+  
+  <!-- Main Content -->
+  <g transform="translate(80,60)">
+    
+    <!-- Header -->
+    <g transform="translate(0,0)">
+      <text x="0" y="0" fill="#0f172a" font-size="42" font-weight="bold">Operations Research</text>
+      <text x="0" y="48" fill="#64748b" font-size="21">Mathematical Optimization &amp; Decision Science</text>
+      
+      <!-- Methodology badges -->
+      <g transform="translate(0,80)">
+        <rect x="0" y="0" width="160" height="36" rx="18" fill="url(#primaryGradient)" filter="url(#softShadow)"/>
+        <text x="80" y="24" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Linear Programming</text>
+        
+        <rect x="175" y="0" width="140" height="36" rx="18" fill="url(#accentGradient1)" filter="url(#softShadow)"/>
+        <text x="245" y="24" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Optimization</text>
+        
+        <rect x="330" y="0" width="140" height="36" rx="18" fill="url(#accentGradient2)" filter="url(#softShadow)"/>
+        <text x="400" y="24" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Simulation</text>
+        
+        <rect x="485" y="0" width="150" height="36" rx="18" fill="url(#accentGradient3)" filter="url(#softShadow)"/>
+        <text x="560" y="24" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600">Decision Analysis</text>
+      </g>
+    </g>
+    
+    <!-- Main Visualization: Network/Graph Optimization -->
+    <g transform="translate(0,170)">
+      <text x="0" y="0" fill="#1e293b" font-size="26" font-weight="bold">Network Optimization Model</text>
+      <text x="0" y="32" fill="#64748b" font-size="15">Supply Chain &amp; Logistics Flow Analysis</text>
+      
+      <!-- Network Graph Container -->
+      <g transform="translate(0,60)">
+        <rect x="0" y="0" width="700" height="480" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        
+        <!-- Grid lines -->
+        <g opacity="0.1">
+          <line x1="100" y1="40" x2="100" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="200" y1="40" x2="200" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="300" y1="40" x2="300" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="400" y1="40" x2="400" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="500" y1="40" x2="500" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="600" y1="40" x2="600" y2="440" stroke="#64748b" stroke-width="1"/>
+          <line x1="40" y1="100" x2="660" y2="100" stroke="#64748b" stroke-width="1"/>
+          <line x1="40" y1="180" x2="660" y2="180" stroke="#64748b" stroke-width="1"/>
+          <line x1="40" y1="260" x2="660" y2="260" stroke="#64748b" stroke-width="1"/>
+          <line x1="40" y1="340" x2="660" y2="340" stroke="#64748b" stroke-width="1"/>
+          <line x1="40" y1="420" x2="660" y2="420" stroke="#64748b" stroke-width="1"/>
+        </g>
+        
+        <!-- Network connections (edges) -->
+        <line x1="100" y1="120" x2="300" y2="120" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="100" y1="120" x2="200" y2="240" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="300" y1="120" x2="500" y2="120" stroke="#3b82f6" stroke-width="4" opacity="0.7"/>
+        <line x1="300" y1="120" x2="400" y2="240" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="200" y1="240" x2="400" y2="240" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="200" y1="240" x2="300" y2="360" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="400" y1="240" x2="500" y2="120" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="400" y1="240" x2="500" y2="360" stroke="#06b6d4" stroke-width="4" opacity="0.7"/>
+        <line x1="500" y1="120" x2="600" y2="240" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="300" y1="360" x2="500" y2="360" stroke="#cbd5e1" stroke-width="3" opacity="0.5"/>
+        <line x1="500" y1="360" x2="600" y2="240" stroke="#ec4899" stroke-width="4" opacity="0.7"/>
+        
+        <!-- Network nodes -->
+        <!-- Source Node -->
+        <g transform="translate(100,120)">
+          <circle cx="0" cy="0" r="35" fill="#10b981" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="28" fill="#10b981"/>
+          <text x="0" y="-48" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="600">Source</text>
+          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">S</text>
+        </g>
+        
+        <!-- Intermediate Nodes -->
+        <g transform="translate(300,120)">
+          <circle cx="0" cy="0" r="30" fill="#3b82f6" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#3b82f6"/>
+          <text x="0" y="-40" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node A</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">A</text>
+        </g>
+        
+        <g transform="translate(200,240)">
+          <circle cx="0" cy="0" r="30" fill="#06b6d4" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#06b6d4"/>
+          <text x="-50" y="5" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node B</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">B</text>
+        </g>
+        
+        <g transform="translate(400,240)">
+          <circle cx="0" cy="0" r="30" fill="#8b5cf6" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#8b5cf6"/>
+          <text x="0" y="-40" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node C</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">C</text>
+        </g>
+        
+        <g transform="translate(500,120)">
+          <circle cx="0" cy="0" r="30" fill="#f59e0b" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#f59e0b"/>
+          <text x="0" y="-40" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node D</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">D</text>
+        </g>
+        
+        <g transform="translate(300,360)">
+          <circle cx="0" cy="0" r="30" fill="#ec4899" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#ec4899"/>
+          <text x="0" y="45" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node E</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">E</text>
+        </g>
+        
+        <g transform="translate(500,360)">
+          <circle cx="0" cy="0" r="30" fill="#a78bfa" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="24" fill="#a78bfa"/>
+          <text x="0" y="45" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="600">Node F</text>
+          <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">F</text>
+        </g>
+        
+        <!-- Destination Node -->
+        <g transform="translate(600,240)">
+          <circle cx="0" cy="0" r="35" fill="#ef4444" opacity="0.2" filter="url(#softShadow)"/>
+          <circle cx="0" cy="0" r="28" fill="#ef4444"/>
+          <text x="0" y="-48" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="600">Destination</text>
+          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">T</text>
+        </g>
+        
+        <!-- Flow labels on optimal path -->
+        <g transform="translate(400,105)">
+          <rect x="-30" y="-12" width="60" height="24" rx="4" fill="#3b82f6" opacity="0.9"/>
+          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Flow: 45</text>
+        </g>
+        
+        <g transform="translate(450,300)">
+          <rect x="-30" y="-12" width="60" height="24" rx="4" fill="#06b6d4" opacity="0.9"/>
+          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Flow: 30</text>
+        </g>
+        
+        <g transform="translate(550,300)">
+          <rect x="-30" y="-12" width="60" height="24" rx="4" fill="#ec4899" opacity="0.9"/>
+          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Flow: 30</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Right Section: OR Techniques -->
+    <g transform="translate(750,170)">
+      <text x="0" y="0" fill="#1e293b" font-size="26" font-weight="bold">Optimization Techniques</text>
+      
+      <!-- Technique Cards -->
+      <g transform="translate(0,50)">
+        <!-- Linear Programming -->
+        <rect x="0" y="0" width="560" height="90" rx="12" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        <g transform="translate(25,28)">
+          <rect x="0" y="0" width="50" height="50" rx="10" fill="#dbeafe"/>
+          <text x="25" y="32" text-anchor="middle" fill="#3b82f6" font-size="20" font-weight="bold">LP</text>
+          
+          <text x="70" y="20" fill="#1e293b" font-size="17" font-weight="bold">Linear Programming</text>
+          <text x="70" y="42" fill="#64748b" font-size="13">Maximize/minimize linear objective functions with constraints</text>
+        </g>
+        
+        <!-- Integer Programming -->
+        <rect x="0" y="105" width="560" height="90" rx="12" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        <g transform="translate(25,133)">
+          <rect x="0" y="0" width="50" height="50" rx="10" fill="#dbeafe"/>
+          <text x="25" y="32" text-anchor="middle" fill="#2563eb" font-size="20" font-weight="bold">IP</text>
+          
+          <text x="70" y="20" fill="#1e293b" font-size="17" font-weight="bold">Integer Programming</text>
+          <text x="70" y="42" fill="#64748b" font-size="13">Discrete optimization with integer decision variables</text>
+        </g>
+        
+        <!-- Network Flows -->
+        <rect x="0" y="210" width="560" height="90" rx="12" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        <g transform="translate(25,238)">
+          <rect x="0" y="0" width="50" height="50" rx="10" fill="#cffafe"/>
+          <circle cx="15" cy="25" r="5" fill="#06b6d4"/>
+          <circle cx="35" cy="25" r="5" fill="#06b6d4"/>
+          <line x1="20" y1="25" x2="30" y2="25" stroke="#06b6d4" stroke-width="2"/>
+          
+          <text x="70" y="20" fill="#1e293b" font-size="17" font-weight="bold">Network Flow Optimization</text>
+          <text x="70" y="42" fill="#64748b" font-size="13">Shortest path, max flow, minimum cost flow problems</text>
+        </g>
+        
+        <!-- Queueing Theory -->
+        <rect x="0" y="315" width="560" height="90" rx="12" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        <g transform="translate(25,343)">
+          <rect x="0" y="0" width="50" height="50" rx="10" fill="#fce7f3"/>
+          <circle cx="18" cy="25" r="6" fill="none" stroke="#ec4899" stroke-width="2"/>
+          <circle cx="32" cy="25" r="6" fill="none" stroke="#ec4899" stroke-width="2"/>
+          <line x1="24" y1="25" x2="26" y2="25" stroke="#ec4899" stroke-width="2"/>
+          
+          <text x="70" y="20" fill="#1e293b" font-size="17" font-weight="bold">Queueing Theory</text>
+          <text x="70" y="42" fill="#64748b" font-size="13">Service system analysis and capacity planning</text>
+        </g>
+        
+        <!-- Stochastic Optimization -->
+        <rect x="0" y="420" width="560" height="90" rx="12" fill="url(#cardGradient)" filter="url(#shadow)"/>
+        <g transform="translate(25,448)">
+          <rect x="0" y="0" width="50" height="50" rx="10" fill="#f3e8ff"/>
+          <path d="M 15 35 L 20 28 L 25 32 L 30 20 L 35 26" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          
+          <text x="70" y="20" fill="#1e293b" font-size="17" font-weight="bold">Stochastic Optimization</text>
+          <text x="70" y="42" fill="#64748b" font-size="13">Decision-making under uncertainty and risk</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Bottom Section: Application Areas -->
+    <g transform="translate(0,700)">
+      <text x="0" y="0" fill="#1e293b" font-size="24" font-weight="bold">Application Domains</text>
+      
+      <g transform="translate(0,40)">
+        <!-- Supply Chain -->
+        <g transform="translate(0,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#3b82f6" opacity="0.2"/>
+          <path d="M 28 35 L 35 28 L 42 35 L 35 42 Z" fill="#3b82f6"/>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Supply Chain</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Inventory &amp; Logistics</text>
+        </g>
+        
+        <!-- Manufacturing -->
+        <g transform="translate(220,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#06b6d4" opacity="0.2"/>
+          <rect x="26" y="26" width="18" height="18" rx="2" fill="#06b6d4"/>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Manufacturing</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Production Planning</text>
+        </g>
+        
+        <!-- Transportation -->
+        <g transform="translate(440,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#ec4899" opacity="0.2"/>
+          <path d="M 26 35 L 35 26 L 44 35" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Transportation</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Routing &amp; Scheduling</text>
+        </g>
+        
+        <!-- Finance -->
+        <g transform="translate(660,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#8b5cf6" opacity="0.2"/>
+          <text x="35" y="40" text-anchor="middle" fill="#8b5cf6" font-size="18" font-weight="bold">$</text>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Finance</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Portfolio Optimization</text>
+        </g>
+        
+        <!-- Healthcare -->
+        <g transform="translate(880,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#10b981" opacity="0.2"/>
+          <path d="M 35 27 L 35 43 M 27 35 L 43 35" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Healthcare</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Resource Allocation</text>
+        </g>
+        
+        <!-- Energy -->
+        <g transform="translate(1100,0)">
+          <rect x="0" y="0" width="200" height="70" rx="10" fill="url(#cardGradient)" filter="url(#softShadow)"/>
+          <circle cx="35" cy="35" r="18" fill="#f59e0b" opacity="0.2"/>
+          <path d="M 35 26 L 30 35 L 35 35 L 32 44 M 35 35 L 40 35" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="65" y="30" fill="#1e293b" font-size="14" font-weight="600">Energy</text>
+          <text x="65" y="47" fill="#64748b" font-size="11">Grid Optimization</text>
+        </g>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="1380" cy="120" r="70" fill="#3b82f6" opacity="0.06"/>
+  <circle cx="90" cy="750" r="60" fill="#ec4899" opacity="0.06"/>
+  <circle cx="1380" cy="750" r="50" fill="#8b5cf6" opacity="0.06"/>
+  
+</svg>

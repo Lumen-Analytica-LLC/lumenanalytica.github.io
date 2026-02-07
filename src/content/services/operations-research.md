@@ -9,6 +9,8 @@ tags:
   - Optimization
   - Modeling
   - Simulation
+order: 4
+category: Business Services
 ---
 
 Our Ops Research (OR) service helps organizations make better, data-driven operational decisions using quantitative modeling, optimization, and simulation. We apply methods from optimization, stochastic modeling, simulation, and analytics to reduce costs, improve throughput, and quantify trade-offs for complex operational systems.

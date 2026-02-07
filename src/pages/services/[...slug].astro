@@ -8,12 +8,12 @@ import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 interface Props {
-    entry: CollectionEntry<'work'>;
+    entry: CollectionEntry<'services'>;
 }
 
 export async function getStaticPaths() {
-    const work = await getCollection('work');
-    return work.map((entry) => ({
+    const services = await getCollection('services');
+    return services.map((entry) => ({
         params: { slug: entry.id },
         props: { entry },
     }));

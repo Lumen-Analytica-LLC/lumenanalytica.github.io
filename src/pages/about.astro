@@ -1,10 +1,36 @@
 ---
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
+import Timeline from '../components/Timeline.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const structuredData = {
+	"@context": "https://schema.org",
+	"@type": "ProfessionalService",
+	"name": "Lumen Analytica",
+	"description": "Data analytics and operational excellence consulting for higher education, healthcare, supply chain, and service organizations",
+	"url": "https://lumenanalytica.io",
+	"email": "insights@lumenanalytica.io",
+	"address": {
+		"@type": "PostalAddress",
+		"addressLocality": "McAllen",
+		"addressRegion": "TX",
+		"postalCode": "78501",
+		"addressCountry": "US"
+	},
+	"areaServed": "US",
+	"openingHoursSpecification": {
+		"@type": "OpeningHoursSpecification",
+		"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+		"opens": "09:00",
+		"closes": "17:00"
+	}
+};
 ---
 
 <BaseLayout title="About | Lumen Analytica" description="About Lumen Analytica and our background">
+	<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+	
 	<div class="stack gap-20">
 		<main class="wrapper about">
 			<Hero
@@ -27,27 +53,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					</p>
 				</div>
 			</section>
+
+			<section>
+				<h2 class="section-title">Experience</h2>
+				<div class="content">
+					<Timeline />
+				</div>
+			</section>
+
+			<section>
+				<h2 class="section-title">Our Values</h2>
+				<div class="content">
+					<ul class="values-list">
+						<li><strong>Rigor & Evidence:</strong> We believe in data-driven decisions backed by sound methodology and rigorous experimentation.</li>
+						<li><strong>Practical Impact:</strong> Analytics must translate into actionable strategies that deliver measurable results.</li>
+						<li><strong>Partnership:</strong> We work alongside our clients as collaborative partners, not distant consultants.</li>
+						<li><strong>Integrity:</strong> We provide honest assessments and transparent communication, even when it's difficult.</li>
+						<li><strong>Continuous Learning:</strong> We stay at the forefront of methods and technology to serve our clients better.</li>
+					</ul>
+				</div>
+			</section>
+
 			<section>
 				<h2 class="section-title">Contact</h2>
 				<div class="content">
-					<table class="contact-table">
-						<tr>
-							<td class="label">Email</td>
-							<td><a href="mailto:insights@lumenanalytica.io">insights@lumenanalytica.io</a></td>
-						</tr>
-						<tr>
-							<td class="label">Address</td>
-							<td>P.O. BOX XXXX</td>
-						</tr>
-						<tr>
-							<td class="label">Location</td>
-							<td>McAllen, Texas - 78501</td>
-						</tr>
-						<tr>
-							<td class="label">Business Hours</td>
-							<td>Monday - Friday, 9:00 AM - 5:00 PM CST</td>
-						</tr>
-					</table>
+					<address class="contact-info">
+						<dl class="contact-list">
+							<div class="contact-item">
+								<dt>Email</dt>
+								<dd><a href="mailto:insights@lumenanalytica.io" itemprop="email">insights@lumenanalytica.io</a></dd>
+							</div>
+							<div class="contact-item">
+								<dt>Phone</dt>
+								<dd><a href="tel:+1-956-648-1130" itemprop="telephone">+1 (956) 648-1130</a></dd>
+							</div>
+							<div class="contact-item">
+								<dt>Location</dt>
+								<dd itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+									<span itemprop="addressLocality">McAllen</span>, 
+									<span itemprop="addressRegion">Texas</span> 
+									<span itemprop="postalCode">78501</span>
+								</dd>
+							</div>
+							<div class="contact-item">
+								<dt>Business Hours</dt>
+								<dd>Monday - Friday, 9:00 AM - 5:00 PM CST</dd>
+							</div>
+						</dl>
+					</address>
 				</div>
 			</section>
 		</main>
@@ -97,29 +150,89 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		text-decoration-color: currentColor;
 	}
 
-	.contact-table {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: 1rem;
+	.values-list {
+		list-style: none;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 
-	.contact-table tr {
+	.values-list li {
+		padding-left: 1.5rem;
+		position: relative;
+	}
+
+	.values-list li::before {
+		content: "→";
+		position: absolute;
+		left: 0;
+		color: var(--accent-regular);
+		font-weight: bold;
+	}
+
+	.values-list strong {
+		color: var(--gray-0);
+	}
+
+	.contact-info {
+		font-style: normal;
+	}
+
+	.contact-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin: 0;
+	}
+
+	.contact-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding-bottom: 1rem;
 		border-bottom: 1px solid var(--gray-800);
 	}
 
-	.contact-table td {
-		padding: 0.75rem 0;
+	.contact-item:last-child {
+		border-bottom: none;
 	}
 
-	.contact-table .label {
+	.contact-item dt {
 		font-weight: 600;
 		color: var(--gray-0);
-		padding-right: 2rem;
-		white-space: nowrap;
-		width: 150px;
+		font-size: var(--text-sm);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.contact-item dd {
+		margin: 0;
+		color: var(--gray-200);
+	}
+
+	.contact-item a {
+		color: var(--gray-200);
+		text-decoration: none;
+		transition: color var(--theme-transition);
+	}
+
+	.contact-item a:hover,
+	.contact-item a:focus {
+		color: var(--accent-regular);
 	}
 
 	@media (min-width: 50em) {
+		.contact-item {
+			flex-direction: row;
+			align-items: baseline;
+			gap: 2rem;
+		}
+
+		.contact-item dt {
+			min-width: 150px;
+			flex-shrink: 0;
+		}
 		.about {
 			display: grid;
 			grid-template-columns: 1fr 60% 1fr;

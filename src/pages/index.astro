@@ -13,9 +13,9 @@ import Skills from '../components/Skills.astro';
 // Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Content Fetching: List four most recent work projects
-const projects = (await getCollection('work'))
-	.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+// Content Fetching: List services sorted by order field
+const projects = (await getCollection('services'))
+	.sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
 	.slice(0, 4);
 
 // Full Astro Component Syntax:
@@ -28,17 +28,23 @@ const projects = (await getCollection('work'))
 			<header class="hero">
 				<Hero
 					title="Hello, we are Lumen Analytica."
-					tagline="A data consulting and operations research firm focused on helping organizations make smarter, evidence-based decisions."
+					tagline="We transform complex data into strategic advantages, helping organizations make faster, evidence-based decisions that drive measurable results."
 					align="start"
 				>
 					<div class="roles">
-						<Pill><Icon icon="terminal-window" size="1.33em" /> Automate</Pill>
-						<Pill><Icon icon="strategy" size="1.33em" /> Strategize</Pill>
-						<Pill><Icon icon="rocket-launch" size="1.33em" /> Scale</Pill>
+						<Pill><Icon icon="terminal-window" size="1.33em" /> Save 20+ Hours/Week</Pill>
+						<Pill><Icon icon="strategy" size="1.33em" /> Data-Driven Insights</Pill>
+						<Pill><Icon icon="rocket-launch" size="1.33em" /> Enterprise-Ready</Pill>
+					</div>
+					<div class="hero-cta">
+						<CallToAction href="/services/">
+							Explore Our Services
+							<Icon icon="arrow-right" size="1.2em" />
+						</CallToAction>
 					</div>
 				</Hero>
 
-				<img src="/assets/revenue-detailed.svg" alt="Revenue analysis" />
+				<img src="/assets/revenue-detailed.svg" alt="Interactive revenue analysis dashboard showing detailed financial data trends and forecasting insights" loading="lazy" />
 			</header>
 
 			<Skills />
@@ -71,27 +77,36 @@ const projects = (await getCollection('work'))
 				</div>
 			</section>
 
-			<!-- <section class="section with-background bg-variant">
+			<section class="section with-background bg-variant">
 				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Mentions</h3>
+					<h3>Proven Impact</h3>
 					<p>
-						I have been fortunate enough to receive praise for my work in several publications. Take
-						a look below to learn more.
+						Real results from our client engagements. We measure success through tangible outcomes
+						and lasting improvements.
 					</p>
 				</header>
 
 				<div class="gallery">
 					<Grid variant="small">
 						{
-							['Medium', 'BuzzFeed', 'The Next Web', 'awwwards.', 'TechCrunch'].map((brand) => (
+							[
+								{ metric: '40%', description: 'Reduction in Processing Time' },
+								{ metric: '$2.5M+', description: 'Annual Cost Savings' },
+								{ metric: '99.8%', description: 'Data Accuracy Achieved' },
+								{ metric: '10x', description: 'Faster Reporting' },
+								{ metric: '500+', description: 'Processes Automated' }
+							].map((result) => (
 								<li class="mention-card">
-									<p>{brand}</p>
+									<div class="result-content">
+										<p class="result-metric">{result.metric}</p>
+										<p class="result-description">{result.description}</p>
+									</div>
 								</li>
 							))
 						}
 					</Grid>
 				</div>
-			</section> -->
+			</section>
 		</main>
 
 		<ContactCTA />
@@ -107,6 +122,10 @@ const projects = (await getCollection('work'))
 	}
 
 	.roles {
+		display: none;
+	}
+
+	.hero-cta {
 		display: none;
 	}
 
@@ -130,6 +149,11 @@ const projects = (await getCollection('work'))
 			margin-top: 0.5rem;
 			display: flex;
 			gap: 0.5rem;
+		}
+
+		.hero-cta {
+			margin-top: 1.5rem;
+			display: block;
 		}
 
 		.hero img {
@@ -235,10 +259,37 @@ const projects = (await getCollection('work'))
 		box-shadow: var(--shadow-sm);
 	}
 
+	.result-content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.result-metric {
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		color: var(--accent-regular);
+		line-height: 1;
+	}
+
+	.result-description {
+		font-size: var(--text-sm);
+		color: var(--gray-300);
+		line-height: 1.2;
+	}
+
 	@media (min-width: 50em) {
 		.mention-card {
 			border-radius: 1.5rem;
 			height: 9.5rem;
+		}
+
+		.result-metric {
+			font-size: var(--text-3xl);
+		}
+
+		.result-description {
+			font-size: var(--text-base);
 		}
 	}
 </style>

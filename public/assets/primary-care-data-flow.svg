@@ -1,0 +1,32 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F7F3EE"/>
+  <rect x="80" y="120" width="460" height="420" rx="28" fill="#FFFFFF" stroke="#0E3A3E" stroke-width="4"/>
+  <rect x="110" y="150" width="400" height="120" rx="18" fill="#E9F2F1"/>
+  <rect x="210" y="190" width="200" height="40" rx="8" fill="#0E3A3E"/>
+  <rect x="260" y="150" width="100" height="120" fill="#E9F2F1"/>
+  <rect x="120" y="300" width="120" height="90" rx="12" fill="#E9F2F1"/>
+  <rect x="260" y="300" width="120" height="90" rx="12" fill="#E9F2F1"/>
+  <rect x="400" y="300" width="120" height="90" rx="12" fill="#E9F2F1"/>
+  <rect x="150" y="430" width="340" height="80" rx="12" fill="#E9F2F1"/>
+  <rect x="290" y="350" width="40" height="40" fill="#0E3A3E"/>
+  <rect x="305" y="335" width="10" height="70" fill="#0E3A3E"/>
+  <rect x="840" y="120" width="280" height="420" rx="28" fill="#FFFFFF" stroke="#0E3A3E" stroke-width="4"/>
+  <rect x="870" y="150" width="220" height="60" rx="10" fill="#E9F2F1"/>
+  <rect x="870" y="230" width="220" height="60" rx="10" fill="#E9F2F1"/>
+  <rect x="870" y="310" width="220" height="60" rx="10" fill="#E9F2F1"/>
+  <rect x="870" y="390" width="220" height="60" rx="10" fill="#E9F2F1"/>
+  <circle cx="670" cy="220" r="18" fill="#0E3A3E"/>
+  <circle cx="670" cy="320" r="18" fill="#0E3A3E"/>
+  <circle cx="670" cy="420" r="18" fill="#0E3A3E"/>
+  <path d="M540 220H650" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round"/>
+  <path d="M540 320H650" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round"/>
+  <path d="M540 420H650" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round"/>
+  <path d="M690 220H840" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 14"/>
+  <path d="M690 320H840" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 14"/>
+  <path d="M690 420H840" stroke="#0E3A3E" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 14"/>
+  <rect x="90" y="590" width="1020" height="120" rx="24" fill="#FFFFFF" stroke="#0E3A3E" stroke-width="4"/>
+  <rect x="130" y="620" width="220" height="60" rx="12" fill="#E9F2F1"/>
+  <rect x="380" y="620" width="220" height="60" rx="12" fill="#E9F2F1"/>
+  <rect x="630" y="620" width="220" height="60" rx="12" fill="#E9F2F1"/>
+  <rect x="880" y="620" width="200" height="60" rx="12" fill="#E9F2F1"/>
+</svg>

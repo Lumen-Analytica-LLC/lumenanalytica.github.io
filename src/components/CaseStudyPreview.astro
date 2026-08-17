@@ -1,0 +1,112 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Pill from './Pill.astro';
+import StatGrid from './StatGrid.astro';
+
+interface Props {
+	study: CollectionEntry<'case-studies'>;
+}
+
+const { data, id } = Astro.props.study;
+const previewTags = data.tags.slice(0, 3);
+const previewOutcomes = data.outcomes?.slice(0, 3) ?? [];
+---
+
+<a class="card" href={`/case-studies/${id}`}>
+	<div class="content">
+		<p class="eyebrow">Case Study · Illustrative Example</p>
+		<h3>{data.title}</h3>
+		<p class="description">{data.description}</p>
+	</div>
+	{previewOutcomes.length > 0 && (
+		<div aria-label="Key outcomes">
+			<StatGrid stats={previewOutcomes} variant="outcome" columns={3} />
+		</div>
+	)}
+	<div class="tag-rail">
+		<div class="tags">
+			{previewTags.map((tag) => (
+				<Pill>{tag}</Pill>
+			))}
+		</div>
+	</div>
+</a>
+
+<style>
+	.card {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		gap: 1rem;
+		padding: 1.75rem;
+		min-height: 12rem;
+		border-radius: 0.75rem;
+		border: 1px solid var(--gray-800);
+		background: var(--gradient-subtle);
+		box-shadow: var(--shadow-sm);
+		text-decoration: none;
+		color: inherit;
+		font-family: var(--font-brand);
+		transition: box-shadow var(--theme-transition), transform var(--theme-transition);
+	}
+
+	.card:hover {
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+	}
+
+	.content {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.eyebrow {
+		font-size: var(--text-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--gray-400);
+		margin: 0;
+	}
+
+	h3 {
+		font-size: var(--text-lg);
+		margin: 0;
+		color: var(--gray-0);
+	}
+
+	.description {
+		margin: 0;
+		color: var(--gray-300);
+		font-size: var(--text-base);
+		line-height: 1.6;
+	}
+
+	.tag-rail {
+		display: flex;
+		align-items: flex-end;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: nowrap;
+		gap: 0.5rem;
+		overflow: hidden;
+	}
+
+	@media (min-width: 50em) {
+		.card {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto 1fr auto;
+			min-height: 24rem;
+			border-radius: 1.5rem;
+			padding: 2.25rem;
+		}
+
+		h3 {
+			font-size: var(--text-xl);
+		}
+
+		.tag-rail {
+			justify-content: flex-start;
+		}
+	}
+</style>

@@ -9,6 +9,7 @@ import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import Pill from '../components/Pill.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
+import CaseStudyPreview from '../components/CaseStudyPreview.astro';
 import Skills from '../components/Skills.astro';
 // Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -16,6 +17,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 // Content Fetching: List services sorted by order field
 const projects = (await getCollection('services'))
 	.sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
+	.slice(0, 4);
+
+const caseStudies = (await getCollection('case-studies'))
+	.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
 	.slice(0, 4);
 
 // Full Astro Component Syntax:
@@ -28,13 +33,13 @@ const projects = (await getCollection('services'))
 			<header class="hero">
 				<Hero
 					title="Hello, we are Lumen Analytica."
-					tagline="We transform complex data into strategic advantages, helping organizations make faster, evidence-based decisions that drive measurable results."
+					tagline="We build data warehouses, automate back-office systems, and apply operations research for small and mid-sized organizations that don't have an in-house data team."
 					align="start"
 				>
 					<div class="roles">
 						<Pill><Icon icon="terminal-window" size="1.33em" /> Save 20+ Hours/Week</Pill>
-						<Pill><Icon icon="strategy" size="1.33em" /> Data-Driven Insights</Pill>
-						<Pill><Icon icon="rocket-launch" size="1.33em" /> Enterprise-Ready</Pill>
+						<Pill><Icon icon="strategy" size="1.33em" /> Built for Teams Without a Data Team</Pill>
+						<Pill><Icon icon="rocket-launch" size="1.33em" /> Warehousing, Automation & Ops Research</Pill>
 					</div>
 					<div class="hero-cta">
 						<CallToAction href="/services/">
@@ -77,34 +82,38 @@ const projects = (await getCollection('services'))
 				</div>
 			</section>
 
-			<section class="section with-background bg-variant">
+			<section class="section with-background with-cta bg-variant">
 				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Proven Impact</h3>
+					<h3>Representative Outcomes</h3>
 					<p>
-						Real results from our client engagements. We measure success through tangible outcomes
-						and lasting improvements.
+						Headline results from our case studies — illustrative engagements grounded in real
+						client patterns, not brochure numbers. See the full stories below.
 					</p>
 				</header>
 
 				<div class="gallery">
 					<Grid variant="small">
 						{
-							[
-								{ metric: '40%', description: 'Reduction in Processing Time' },
-								{ metric: '$2.5M+', description: 'Annual Cost Savings' },
-								{ metric: '99.8%', description: 'Data Accuracy Achieved' },
-								{ metric: '10x', description: 'Faster Reporting' },
-								{ metric: '500+', description: 'Processes Automated' }
-							].map((result) => (
-								<li class="mention-card">
-									<div class="result-content">
-										<p class="result-metric">{result.metric}</p>
-										<p class="result-description">{result.description}</p>
-									</div>
-								</li>
-							))
+							caseStudies
+								.filter((study) => study.data.outcomes && study.data.outcomes.length > 0)
+								.slice(0, 4)
+								.map((study) => (
+									<li class="mention-card">
+										<a class="result-content" href={`/case-studies/${study.id}`}>
+											<p class="result-metric">{study.data.outcomes![0].value}</p>
+											<p class="result-description">{study.data.outcomes![0].label}</p>
+										</a>
+									</li>
+								))
 						}
 					</Grid>
+				</div>
+
+				<div class="cta">
+					<CallToAction href="/case-studies/">
+						See the Case Studies
+						<Icon icon="arrow-right" size="1.2em" />
+					</CallToAction>
 				</div>
 			</section>
 		</main>
@@ -242,6 +251,10 @@ const projects = (await getCollection('services'))
 		.cta {
 			grid-area: cta;
 		}
+
+		.case-studies :global(.grid > li) {
+			grid-column: 1 / -1;
+		}
 	}
 
 	/* ====================================================== */
@@ -257,12 +270,20 @@ const projects = (await getCollection('services'))
 		color: var(--gray-300);
 		background: var(--gradient-subtle);
 		box-shadow: var(--shadow-sm);
+		transition: box-shadow var(--theme-transition), transform var(--theme-transition);
+	}
+
+	.mention-card:hover {
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
 	}
 
 	.result-content {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		color: inherit;
+		text-decoration: none;
 	}
 
 	.result-metric {

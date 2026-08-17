@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "lumen-analytica-website",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -12,6 +12,7 @@
     "format": "npx prettier --write ."
   },
   "dependencies": {
-    "astro": "^5.16.5"
+    "astro": "^5.16.5",
+    "@astrojs/mdx": "^4.0.0"
   }
 }

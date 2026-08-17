@@ -1,0 +1,47 @@
+---
+interface AccordionItem {
+	title: string;
+	content: string;
+}
+
+interface Props {
+	items: AccordionItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="accordion">
+	{items.map((item) => (
+		<details>
+			<summary>{item.title}</summary>
+			<p>{item.content}</p>
+		</details>
+	))}
+</div>
+
+<style>
+	.accordion {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	details {
+		border-radius: 0.85rem;
+		border: 1px solid var(--gray-800);
+		background: var(--gray-900);
+		padding: 0.75rem 1rem;
+	}
+
+	summary {
+		cursor: pointer;
+		font-family: var(--font-brand);
+		font-size: var(--text-md);
+		color: var(--gray-0);
+	}
+
+	details p {
+		margin: 0.75rem 0 0 0;
+		color: var(--gray-300);
+	}
+</style>

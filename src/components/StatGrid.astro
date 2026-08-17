@@ -1,0 +1,109 @@
+---
+interface StatItem {
+	label: string;
+	value: string;
+	note?: string;
+}
+
+interface Props {
+	stats: StatItem[];
+	/** 'card' (default): bordered stat tiles, label above value. 'outcome': compact value-first strip used for case-study outcomes. */
+	variant?: 'card' | 'outcome';
+	/** Fixed column count. Defaults to an auto-fit layout sized for the chosen variant. */
+	columns?: number;
+}
+
+const { stats, variant = 'card', columns } = Astro.props;
+const gridStyle = columns ? `grid-template-columns: repeat(${columns}, minmax(0, 1fr));` : undefined;
+---
+
+<div class:list={['stat-grid', variant]} style={gridStyle}>
+	{stats.map((stat) => (
+		<div class="stat-card">
+			{variant === 'outcome' ? (
+				<>
+					<p class="stat-value">{stat.value}</p>
+					<p class="stat-label">{stat.label}</p>
+				</>
+			) : (
+				<>
+					<p class="stat-label">{stat.label}</p>
+					<p class="stat-value">{stat.value}</p>
+					{stat.note && <p class="stat-note">{stat.note}</p>}
+				</>
+			)}
+		</div>
+	))}
+</div>
+
+<style>
+	.stat-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+		gap: 1rem;
+	}
+
+	.stat-grid.outcome {
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+		gap: 0.75rem;
+		padding: 0.75rem 0;
+		border-top: 1px solid var(--gray-800);
+		border-bottom: 1px solid var(--gray-800);
+	}
+
+	.stat-card {
+		padding: 1.25rem;
+		border-radius: 0.9rem;
+		border: 1px solid var(--gray-800);
+		background: var(--gray-900);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.outcome .stat-card {
+		padding: 0;
+		border: none;
+		background: none;
+		box-shadow: none;
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.stat-label {
+		margin: 0;
+		color: var(--gray-400);
+		font-size: var(--text-sm);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.outcome .stat-label {
+		font-size: var(--text-sm);
+		letter-spacing: normal;
+		text-transform: none;
+	}
+
+	.stat-value {
+		margin: 0.5rem 0 0.35rem 0;
+		font-size: var(--text-2xl);
+		font-family: var(--font-brand);
+		color: var(--gray-0);
+	}
+
+	.outcome .stat-value {
+		margin: 0;
+		font-size: var(--text-md);
+		font-weight: 600;
+	}
+
+	.stat-note {
+		margin: 0;
+		color: var(--gray-300);
+		font-size: var(--text-sm);
+	}
+
+	@media (min-width: 50em) {
+		.outcome .stat-value {
+			font-size: var(--text-lg);
+		}
+	}
+</style>

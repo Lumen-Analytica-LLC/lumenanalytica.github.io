@@ -8,7 +8,7 @@ Brief documentation for local development and the tech stack used by this reposi
 - **Framework:** `Astro` — static site / hybrid rendering framework (see `astro.config.mjs`).
 - **Language:** `TypeScript` (project uses `.ts` and `.astro` files; `tsconfig.json` extends `astro/tsconfigs/strict`).
 - **Runtime / Package manager:** `Node` + `npm` (see `package.json` scripts).
-- **Content system:** `astro:content` collections for Markdown content (see `src/content.config.ts` and `src/content/work`).
+- **Content system:** `astro:content` collections for Markdown content (see `src/content.config.ts`, `src/content/services`, and `src/content/case-studies`).
 - **Styling:** plain CSS (`src/styles/global.css`). No CSS framework is declared in `package.json`.
 
 ## Important Files
@@ -44,6 +44,3 @@ Notes:
 ```bash
 npm install -D prettier eslint
 ```
-
-If you'd like, I can add recommended devDependencies and enable lint/format configuration files.
-

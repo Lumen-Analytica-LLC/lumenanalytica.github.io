@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import CaseStudyPreview from '../components/CaseStudyPreview.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import Grid from '../components/Grid.astro';
+import Hero from '../components/Hero.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const caseStudies = (await getCollection('case-studies')).sort(
+	(a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+
+<BaseLayout
+	title="Case Studies | Lumen Analytica"
+	description="Case studies showing how Lumen Analytica delivers measurable outcomes across industries."
+>
+	<div class="stack gap-20">
+		<main class="wrapper stack gap-8">
+			<Hero
+				title="Case Studies"
+				tagline="Real-world client outcomes across healthcare, cybersecurity, logistics, and retail."
+				align="start"
+			/>
+			<p class="disclosure">
+				These are illustrative engagements grounded in real client patterns — composite scenarios, not
+				verbatim client histories.
+			</p>
+			<section class="case-study-list">
+				<Grid variant="offset">
+					{caseStudies.map((study) => (
+						<li>
+							<CaseStudyPreview study={study} />
+						</li>
+					))}
+				</Grid>
+			</section>
+		</main>
+		<ContactCTA />
+	</div>
+</BaseLayout>
+
+<style>
+	.disclosure {
+		max-width: 60ch;
+		color: var(--gray-400);
+		font-size: var(--text-sm);
+	}
+
+	.case-study-list {
+		margin-top: 1rem;
+	}
+</style>

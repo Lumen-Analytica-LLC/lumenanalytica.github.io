@@ -1,0 +1,291 @@
+---
+interface Props {
+	/** Inquiry address the "email these numbers" button writes to. */
+	email: string;
+}
+
+const { email } = Astro.props;
+
+const inputs = [
+	{ name: 'lostPerDay', label: 'Patients lost per day', hint: 'Walk-ins who leave, plus visits you turn away when the day runs long', value: 3, min: 0, max: 50, step: 0.5 },
+	{ name: 'revenuePerVisit', label: 'Revenue per visit', prefix: '$', value: 145, min: 0, max: 2000, step: 5 },
+	{ name: 'overtimeMinutes', label: 'Overtime per day (minutes)', hint: 'How long past close the last patient leaves', value: 40, min: 0, max: 300, step: 5 },
+	{ name: 'staffOnOvertime', label: 'Staff kept on for overtime', value: 6, min: 0, max: 100, step: 1 },
+	{ name: 'hourlyCost', label: 'Loaded hourly staff cost', prefix: '$', value: 38, min: 0, max: 300, step: 1 },
+	{ name: 'workingDays', label: 'Clinic days per year', value: 250, min: 1, max: 365, step: 1 },
+];
+---
+
+<form class="roi" data-roi data-email={email}>
+	<div class="inputs">
+		{
+			inputs.map((input) => (
+				<label class="field">
+					<span class="label">{input.label}</span>
+					<span class="input-wrap">
+						{input.prefix && <span class="prefix">{input.prefix}</span>}
+						<input
+							type="number"
+							inputmode="decimal"
+							name={input.name}
+							value={input.value}
+							min={input.min}
+							max={input.max}
+							step={input.step}
+						/>
+					</span>
+					{input.hint && <span class="hint">{input.hint}</span>}
+				</label>
+			))
+		}
+
+		<label class="field field-wide">
+			<span class="label-row">
+				<span class="label">Improvement from changes tested in the twin</span>
+				<output data-improvement-out>25%</output>
+			</span>
+			<input type="range" name="improvement" min="5" max="60" step="5" value="25" />
+			<span class="hint">An assumption, not a promise. The pilot measures the real number for your clinic.</span>
+		</label>
+	</div>
+
+	<div class="results" aria-live="polite">
+		<p class="eyebrow">Estimated annual impact</p>
+		<p class="total" data-out="total">–</p>
+		<dl>
+			<div>
+				<dt>Recovered visits</dt>
+				<dd data-out="visits">–</dd>
+			</div>
+			<div>
+				<dt>Revenue from recovered visits</dt>
+				<dd data-out="revenue">–</dd>
+			</div>
+			<div>
+				<dt>Overtime avoided (at 1.5×)</dt>
+				<dd data-out="overtime">–</dd>
+			</div>
+		</dl>
+		<a class="send" data-send href={`mailto:${email}`}>Email these numbers to us →</a>
+		<p class="fine">Estimates use only the numbers you enter. Nothing is stored or sent until you choose to email us.</p>
+	</div>
+</form>
+
+<script>
+	const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+	const count = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+
+	for (const form of document.querySelectorAll<HTMLFormElement>('[data-roi]')) {
+		const out = (name: string) => form.querySelector<HTMLElement>(`[data-out="${name}"]`)!;
+		const send = form.querySelector<HTMLAnchorElement>('[data-send]')!;
+		const improvementOut = form.querySelector<HTMLOutputElement>('[data-improvement-out]')!;
+
+		const update = () => {
+			const data = new FormData(form);
+			const n = (key: string) => Math.max(0, Number(data.get(key)) || 0);
+			const improvement = n('improvement') / 100;
+			const days = n('workingDays');
+
+			const visits = n('lostPerDay') * improvement * days;
+			const revenue = visits * n('revenuePerVisit');
+			const overtime = (n('overtimeMinutes') / 60) * n('staffOnOvertime') * n('hourlyCost') * 1.5 * improvement * days;
+			const total = revenue + overtime;
+
+			improvementOut.value = `${Math.round(improvement * 100)}%`;
+			out('visits').textContent = count.format(visits);
+			out('revenue').textContent = money.format(revenue);
+			out('overtime').textContent = money.format(overtime);
+			out('total').textContent = money.format(total);
+
+			const body = [
+				'Hello,',
+				'',
+				'I ran your clinic ROI estimate and would like to talk about a digital twin pilot.',
+				'',
+				`Patients lost per day: ${n('lostPerDay')}`,
+				`Revenue per visit: ${money.format(n('revenuePerVisit'))}`,
+				`Overtime per day: ${n('overtimeMinutes')} min across ${n('staffOnOvertime')} staff at ${money.format(n('hourlyCost'))}/hr`,
+				`Clinic days per year: ${days}`,
+				`Assumed improvement: ${Math.round(improvement * 100)}%`,
+				`Estimated annual impact: ${money.format(total)}`,
+				'',
+				'Name:',
+				'Organization:',
+				'Number of providers / sites:',
+			].join('\n');
+			send.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Clinic digital twin pilot')}&body=${encodeURIComponent(body)}`;
+		};
+
+		form.addEventListener('input', update);
+		form.addEventListener('submit', (event) => event.preventDefault());
+		update();
+	}
+</script>
+
+<style>
+	.roi {
+		display: grid;
+		gap: 1.5rem;
+		padding: 1.5rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 1.5rem;
+		background: var(--gradient-subtle);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.inputs {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.field {
+		display: grid;
+		gap: 0.35rem;
+		align-content: start;
+	}
+
+	.label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--gray-100);
+	}
+
+	.label-row {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	output {
+		font-weight: 700;
+		color: var(--gray-0);
+	}
+
+	.hint {
+		font-size: 0.8rem;
+		color: var(--gray-400);
+	}
+
+	.input-wrap {
+		display: flex;
+		align-items: center;
+		border: 1px solid var(--gray-800);
+		border-radius: 0.6rem;
+		background: var(--gray-999);
+		padding-inline: 0.75rem;
+	}
+
+	.input-wrap:focus-within {
+		border-color: var(--accent-regular);
+		outline: 2px solid var(--accent-overlay);
+	}
+
+	.prefix {
+		color: var(--gray-400);
+		margin-right: 0.25rem;
+	}
+
+	input[type='number'] {
+		width: 100%;
+		border: 0;
+		background: transparent;
+		color: var(--gray-0);
+		font: inherit;
+		padding: 0.55rem 0;
+		outline: none;
+		font-variant-numeric: tabular-nums;
+	}
+
+	input[type='range'] {
+		width: 100%;
+		accent-color: var(--accent-regular);
+	}
+
+	.results {
+		display: grid;
+		gap: 0.75rem;
+		align-content: start;
+		padding: 1.25rem;
+		border-radius: 1rem;
+		background: var(--gray-999);
+		border: 1px solid var(--gray-800);
+	}
+
+	.eyebrow {
+		font-size: var(--text-sm);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--gray-400);
+	}
+
+	.total {
+		font-family: var(--font-brand);
+		font-size: var(--text-3xl);
+		font-weight: 700;
+		line-height: 1;
+		color: var(--accent-dark);
+		font-variant-numeric: tabular-nums;
+	}
+
+	dl {
+		display: grid;
+		gap: 0.5rem;
+		margin: 0;
+	}
+
+	dl > div {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--gray-800);
+		font-size: var(--text-sm);
+	}
+
+	dt {
+		color: var(--gray-300);
+	}
+
+	dd {
+		margin: 0;
+		font-weight: 600;
+		color: var(--gray-0);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.send {
+		justify-self: start;
+		padding: 0.6rem 1.25rem;
+		border-radius: 999rem;
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.send:hover {
+		filter: brightness(1.15);
+	}
+
+	.fine {
+		font-size: 0.75rem;
+		color: var(--gray-400);
+	}
+
+	@media (min-width: 40em) {
+		.inputs {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.field-wide {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 64em) {
+		.roi {
+			grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+			padding: 2rem;
+		}
+	}
+</style>

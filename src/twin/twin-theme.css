@@ -1,0 +1,52 @@
+/* Colors for the digital twin canvases. Read at runtime by src/twin/render/canvas.ts. */
+.twin-theme {
+	--twin-bg: #eef0f5;
+	--twin-floor: #ffffff;
+	--twin-floor-alt: #f7f4fb;
+	--twin-corridor: #e6e9f0;
+	--twin-room: #fbfbfd;
+	--twin-wall: #505d84;
+	--twin-furniture: #dfe3ec;
+	--twin-furniture-strong: #c3cadb;
+	--twin-label: #6474a2;
+	--twin-label-strong: #283044;
+	--twin-ok: #1f9d63;
+	--twin-warn: #d98a00;
+	--twin-bad: #d43c3c;
+	--twin-seen: #a3acc8;
+	--twin-provider: #7611a6;
+	--twin-assistant: #1688ad;
+	--twin-clerk: #5f6f99;
+	--twin-away: #8490b5;
+	--twin-rooming: #2b7bd9;
+	--twin-ready: #d98a00;
+	--twin-visit: #7611a6;
+	--twin-cleaning: #8490b5;
+	--twin-outline: rgba(9, 11, 17, 0.45);
+}
+
+.theme-dark .twin-theme {
+	--twin-bg: #0b0e16;
+	--twin-floor: #161b28;
+	--twin-floor-alt: #1a1b2e;
+	--twin-corridor: #1f2536;
+	--twin-room: #131826;
+	--twin-wall: #8490b5;
+	--twin-furniture: #2a3247;
+	--twin-furniture-strong: #3d4663;
+	--twin-label: #8490b5;
+	--twin-label-strong: #e3e6ee;
+	--twin-ok: #3ccf8e;
+	--twin-warn: #f2b233;
+	--twin-bad: #f06464;
+	--twin-seen: #6474a2;
+	--twin-provider: #c561f6;
+	--twin-assistant: #4cc3e6;
+	--twin-clerk: #8fa0cf;
+	--twin-away: #6474a2;
+	--twin-rooming: #5aa2ff;
+	--twin-ready: #f2b233;
+	--twin-visit: #c561f6;
+	--twin-cleaning: #6474a2;
+	--twin-outline: rgba(0, 0, 0, 0.6);
+}

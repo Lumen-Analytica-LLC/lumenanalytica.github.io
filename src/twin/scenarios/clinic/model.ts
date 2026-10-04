@@ -480,7 +480,7 @@ export class ClinicSim {
 		const arrived = this.patients.filter((p) => !p.noShow);
 		const waits = arrived
 			.filter((p) => p.tSeen !== null)
-			.map((p) => p.tSeen! - waitStart(p))
+			.map((p) => Math.max(0, p.tSeen! - waitStart(p)))
 			.sort((a, b) => a - b);
 		const avgWait = waits.length ? waits.reduce((a, b) => a + b, 0) / waits.length : null;
 		const p90Wait = waits.length ? waits[Math.min(waits.length - 1, Math.floor(waits.length * 0.9))] : null;

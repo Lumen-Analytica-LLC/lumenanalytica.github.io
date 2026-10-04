@@ -1,0 +1,355 @@
+/* Shared layout for the digital twin demos: toolbar, metric tiles, controls, events log. */
+.twin {
+	display: grid;
+	gap: 1rem;
+	color: var(--gray-200);
+}
+
+.twin h2 {
+	font-size: var(--text-md);
+	color: var(--gray-0);
+}
+
+.twin .toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.twin .clock {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6rem;
+}
+
+.twin .clock-label {
+	font-size: var(--text-sm);
+	color: var(--gray-400);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.twin .clock-value {
+	font-family: var(--font-brand);
+	font-size: var(--text-xl);
+	font-weight: 600;
+	color: var(--gray-0);
+	font-variant-numeric: tabular-nums;
+	min-width: 6.5ch;
+}
+
+.twin .transport {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.twin .btn {
+	border: 1px solid var(--gray-800);
+	background: var(--gray-999);
+	color: var(--gray-100);
+	border-radius: 999rem;
+	padding: 0.45rem 1rem;
+	font: inherit;
+	font-size: var(--text-sm);
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: var(--shadow-sm);
+}
+
+.twin .btn:hover {
+	border-color: var(--accent-regular);
+}
+
+.twin .btn-primary {
+	background: var(--accent-regular);
+	border-color: var(--accent-regular);
+	color: var(--accent-text-over);
+	min-width: 5.5rem;
+}
+
+.twin .layout {
+	display: grid;
+	gap: 1rem;
+}
+
+.twin .stage,
+.twin .side {
+	display: grid;
+	gap: 1rem;
+	align-content: start;
+	min-width: 0;
+}
+
+.twin .floor-wrap {
+	border-radius: 1rem;
+	overflow: hidden;
+	border: 1px solid var(--gray-800);
+	box-shadow: var(--shadow-md);
+	background: var(--twin-bg);
+}
+
+.twin canvas {
+	display: block;
+	width: 100%;
+}
+
+.twin [data-floor] {
+	aspect-ratio: 518 / 292;
+}
+
+.twin .legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 1rem;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	font-size: var(--text-sm);
+	color: var(--gray-400);
+}
+
+.twin .legend-rooms {
+	margin-top: -0.6rem;
+}
+
+.twin .legend-title {
+	color: var(--gray-300);
+}
+
+.twin .legend li {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.twin .swatch {
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 999rem;
+	flex: none;
+}
+
+.twin .legend-inline .swatch {
+	border-radius: 0.2rem;
+}
+
+.twin .swatch-booked {
+	background: color-mix(in srgb, var(--twin-provider) 25%, transparent);
+}
+
+.twin .swatch-charting {
+	background: color-mix(in srgb, var(--twin-visit) 35%, transparent);
+}
+
+.twin .swatch-away {
+	background: repeating-linear-gradient(135deg, var(--twin-away) 0 2px, transparent 2px 5px);
+}
+
+.twin .panel {
+	display: grid;
+	gap: 0.75rem;
+	padding: 1rem;
+	border: 1px solid var(--gray-800);
+	border-radius: 1rem;
+	background: var(--gray-999);
+	box-shadow: var(--shadow-sm);
+	min-width: 0;
+}
+
+.twin .panel-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+.twin .kpis {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.6rem;
+}
+
+.twin .kpi {
+	display: grid;
+	gap: 0.15rem;
+	padding: 0.75rem 0.85rem;
+	border: 1px solid var(--gray-800);
+	border-left: 4px solid var(--kpi-color, var(--gray-700));
+	border-radius: 0.75rem;
+	background: var(--gray-999);
+}
+
+.twin .kpi[data-tone='good'] {
+	--kpi-color: var(--twin-ok);
+}
+.twin .kpi[data-tone='warn'] {
+	--kpi-color: var(--twin-warn);
+}
+.twin .kpi[data-tone='bad'] {
+	--kpi-color: var(--twin-bad);
+}
+
+.twin .kpi-label {
+	font-size: 0.8rem;
+	color: var(--gray-400);
+}
+
+.twin .kpi-value {
+	font-family: var(--font-brand);
+	font-size: var(--text-lg);
+	font-weight: 600;
+	color: var(--gray-0);
+	font-variant-numeric: tabular-nums;
+}
+
+.twin .kpi-sub {
+	font-size: 0.75rem;
+	color: var(--gray-400);
+	min-height: 1.2em;
+}
+
+.twin .summary {
+	padding: 0.85rem 1rem;
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--accent-regular) 12%, var(--gray-999));
+	border: 1px solid var(--accent-regular);
+	font-size: var(--text-sm);
+}
+
+.twin .summary[hidden] {
+	display: none;
+}
+
+.twin .controls {
+	gap: 1rem;
+}
+
+.twin .hint {
+	font-size: 0.8rem;
+	color: var(--gray-400);
+	margin-top: -0.5rem;
+}
+
+.twin .field {
+	display: grid;
+	gap: 0.35rem;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	font-size: var(--text-sm);
+}
+
+.twin .field legend {
+	padding: 0;
+	margin-bottom: 0.35rem;
+}
+
+.twin .field-row {
+	display: flex;
+	justify-content: space-between;
+}
+
+.twin output {
+	font-weight: 600;
+	color: var(--gray-0);
+	font-variant-numeric: tabular-nums;
+}
+
+.twin input[type='range'] {
+	width: 100%;
+	accent-color: var(--accent-regular);
+}
+
+.twin .segmented {
+	display: flex;
+	border: 1px solid var(--gray-800);
+	border-radius: 999rem;
+	padding: 0.2rem;
+	gap: 0.2rem;
+}
+
+.twin .segmented label {
+	flex: 1;
+	position: relative;
+}
+
+.twin .segmented input {
+	position: absolute;
+	opacity: 0;
+	inset: 0;
+	cursor: pointer;
+}
+
+.twin .segmented span {
+	display: block;
+	text-align: center;
+	padding: 0.3rem 0.4rem;
+	border-radius: 999rem;
+	font-size: 0.8rem;
+	white-space: nowrap;
+}
+
+.twin .segmented input:checked + span {
+	background: var(--accent-regular);
+	color: var(--accent-text-over);
+	font-weight: 600;
+}
+
+.twin .segmented input:focus-visible + span {
+	outline: 2px solid var(--accent-regular);
+	outline-offset: 2px;
+}
+
+.twin .check {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	font-size: var(--text-sm);
+}
+
+.twin .check input {
+	accent-color: var(--accent-regular);
+	width: 1rem;
+	height: 1rem;
+}
+
+.twin .log {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 0.4rem;
+	font-size: 0.8rem;
+	min-height: 6rem;
+}
+
+.twin .log li {
+	padding-left: 0.6rem;
+	border-left: 3px solid var(--gray-700);
+}
+
+.twin .log li[data-tone='warn'] {
+	border-color: var(--twin-warn);
+}
+.twin .log li[data-tone='bad'] {
+	border-color: var(--twin-bad);
+}
+.twin .log li[data-tone='good'] {
+	border-color: var(--twin-ok);
+}
+
+.twin .log time {
+	font-weight: 600;
+	color: var(--gray-0);
+	font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 64em) {
+	.twin .layout {
+		grid-template-columns: minmax(0, 1fr) 20rem;
+	}
+}

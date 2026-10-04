@@ -1,0 +1,224 @@
+---
+import '../../twin/twin-theme.css';
+import '../../twin/twin-ui.css';
+import { MAX_FORKLIFTS, MAX_INBOUND_DOORS } from '../../twin/scenarios/cold-storage/layout';
+import {
+	DEFAULT_CONFIG,
+	EXCURSION_MINUTES,
+	FORKLIFTS_DOWN_WINDOW,
+	formatClock,
+	PATTERNS,
+	PRIORITIES,
+} from '../../twin/scenarios/cold-storage/model';
+
+const speeds = [
+	{ value: 3, label: '3×' },
+	{ value: 8, label: '8×' },
+	{ value: 15, label: '15×' },
+	{ value: 30, label: '30×' },
+];
+const defaultSpeed = 8;
+
+const kpis = [
+	{ key: 'turn', label: 'Avg truck turn' },
+	{ key: 'detention', label: 'Detention cost' },
+	{ key: 'yard', label: 'Trucks in the yard' },
+	{ key: 'excursions', label: 'Temperature excursions' },
+	{ key: 'dwell', label: 'Avg dock dwell' },
+	{ key: 'utilization', label: 'Forklift utilization' },
+];
+
+const legend = [
+	{ token: 'ok', label: `On dock < ${EXCURSION_MINUTES / 2} min` },
+	{ token: 'warn', label: `${EXCURSION_MINUTES / 2}–${EXCURSION_MINUTES} min` },
+	{ token: 'bad', label: `${EXCURSION_MINUTES}+ min (excursion)` },
+	{ token: 'precool', label: 'Pre-cooling' },
+	{ token: 'hold', label: 'Inspection hold' },
+	{ token: 'cold', label: 'Cooler stock' },
+	{ token: 'mild', label: 'Mild room stock' },
+];
+
+const truckLegend = [
+	{ token: 'truck-in', label: 'Inbound' },
+	{ token: 'truck-out', label: 'Outbound' },
+	{ token: 'forklift', label: 'Forklift' },
+];
+
+const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
+---
+
+<section class="twin twin-theme" data-cold-storage-twin aria-label="Cold storage cross-dock digital twin simulation">
+	<div class="toolbar">
+		<div class="clock" aria-label="Simulated time">
+			<span class="clock-label">Dock time</span>
+			<span class="clock-value" data-clock>5:00 AM</span>
+		</div>
+		<div class="transport">
+			<button type="button" class="btn btn-primary" data-play aria-pressed="true">
+				<span data-label>Pause</span>
+			</button>
+			<button type="button" class="btn" data-restart>Restart day</button>
+			<button type="button" class="btn" data-new-day title="Same settings, a different day of trucks">New day</button>
+		</div>
+	</div>
+
+	<div class="layout">
+		<div class="stage">
+			<div class="floor-wrap">
+				<canvas
+					data-floor
+					style="aspect-ratio: 660 / 352"
+					role="img"
+					aria-label="Top-down view of a produce cross-dock: trucks queue in the yard and back into dock doors while forklifts move pallets to the pre-cool tunnel, inspection hold, cooler and mild room"
+				></canvas>
+			</div>
+			<ul class="legend" aria-label="Pallets">
+				<li class="legend-title">Pallets:</li>
+				{
+					legend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token}); border-radius: 0.2rem`} />
+							{item.label}
+						</li>
+					))
+				}
+			</ul>
+			<ul class="legend legend-rooms" aria-label="Vehicles">
+				<li class="legend-title">Vehicles:</li>
+				{
+					truckLegend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token})`} />
+							{item.label}
+						</li>
+					))
+				}
+				<li class="legend-title">Trailer stripe shows time on site against 2 h free time.</li>
+			</ul>
+
+			<div class="panel">
+				<header class="panel-header">
+					<h2>Dock doors</h2>
+					<ul class="legend legend-inline" aria-label="Board legend">
+						<li><span class="swatch" style="background: var(--twin-truck-in)"></span>Inbound at door</li>
+						<li><span class="swatch" style="background: var(--twin-truck-out)"></span>Outbound at door</li>
+						<li><span class="swatch" style="background: var(--twin-bad)"></span>Detention</li>
+					</ul>
+				</header>
+				<canvas data-board class="board" role="img" aria-label="Timeline of trucks at each dock door, with detention time highlighted, and trucks waiting in the yard"></canvas>
+			</div>
+		</div>
+
+		<aside class="side">
+			<div class="kpis" aria-live="off">
+				{
+					kpis.map((kpi) => (
+						<div class="kpi" data-kpi={kpi.key} data-tone="neutral">
+							<span class="kpi-label">{kpi.label}</span>
+							<span class="kpi-value" data-value>–</span>
+							<span class="kpi-sub" data-sub />
+						</div>
+					))
+				}
+			</div>
+
+			<div class="summary" data-summary role="status" hidden>
+				<strong>Day complete.</strong>
+				<span data-summary-text></span>
+			</div>
+
+			<form class="panel controls" data-controls>
+				<h2>What if…</h2>
+				<p class="hint">Changes replay the day up to now with the same trucks, so you see only the effect of your change.</p>
+
+				<label class="field">
+					<span class="field-row"><span>Forklift drivers</span><output for="cs-forklifts"></output></span>
+					<input id="cs-forklifts" name="forklifts" type="range" min="3" max={MAX_FORKLIFTS} step="1" value={DEFAULT_CONFIG.forklifts} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>Inbound dock doors</span><output for="cs-doors"></output></span>
+					<input id="cs-doors" name="doors" type="range" min="3" max={MAX_INBOUND_DOORS} step="1" value={DEFAULT_CONFIG.doors} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>Inbound trucks per day</span><output for="cs-trucks"></output></span>
+					<input id="cs-trucks" name="trucksPerDay" type="range" min="15" max="55" step="1" value={DEFAULT_CONFIG.trucksPerDay} />
+				</label>
+
+				<fieldset class="field">
+					<legend>Truck arrivals</legend>
+					<div class="segmented">
+						{
+							Object.entries(PATTERNS).map(([value, label]) => (
+								<label>
+									<input type="radio" name="pattern" value={value} checked={value === DEFAULT_CONFIG.pattern} />
+									<span>{label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<fieldset class="field">
+					<legend>Forklift priority</legend>
+					<div class="segmented">
+						{
+							Object.entries(PRIORITIES).map(([value, label]) => (
+								<label>
+									<input type="radio" name="priority" value={value} checked={value === DEFAULT_CONFIG.priority} />
+									<span>{label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<label class="field">
+					<span class="field-row"><span>Loads held for inspection</span><output for="cs-inspect" data-suffix="%"></output></span>
+					<input id="cs-inspect" name="inspectionPct" type="range" min="0" max="40" step="5" value={DEFAULT_CONFIG.inspectionPct} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>Pre-cool tunnel (pallets)</span><output for="cs-precool"></output></span>
+					<input id="cs-precool" name="precoolCapacity" type="range" min="24" max="96" step="8" value={DEFAULT_CONFIG.precoolCapacity} />
+				</label>
+
+				<label class="check">
+					<input name="surge" type="checkbox" checked={DEFAULT_CONFIG.surge} />
+					<span>Peak-season surge (+40% trucks)</span>
+				</label>
+
+				<label class="check">
+					<input name="forkliftsDown" type="checkbox" checked={DEFAULT_CONFIG.forkliftsDown} />
+					<span>Two forklifts down {downStart}–{downEnd}</span>
+				</label>
+
+				<fieldset class="field">
+					<legend>Playback speed</legend>
+					<div class="segmented">
+						{
+							speeds.map((speed) => (
+								<label>
+									<input type="radio" name="speed" value={speed.value} checked={speed.value === defaultSpeed} />
+									<span>{speed.label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+			</form>
+
+			<div class="panel">
+				<h2>Events</h2>
+				<ol class="log" data-log></ol>
+			</div>
+		</aside>
+	</div>
+</section>
+
+<script>
+	import { mountColdStorageTwin } from '../../twin/scenarios/cold-storage/app';
+
+	for (const root of document.querySelectorAll<HTMLElement>('[data-cold-storage-twin]')) mountColdStorageTwin(root);
+</script>

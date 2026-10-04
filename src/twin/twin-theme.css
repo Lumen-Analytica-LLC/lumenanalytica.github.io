@@ -23,6 +23,16 @@
 	--twin-visit: #7611a6;
 	--twin-cleaning: #8490b5;
 	--twin-outline: rgba(9, 11, 17, 0.45);
+	--twin-asphalt: #d9dce4;
+	--twin-lane: #ffffff;
+	--twin-cold: #2b7bd9;
+	--twin-mild: #1f9d63;
+	--twin-precool: #0fa3b8;
+	--twin-hold: #d98a00;
+	--twin-truck: #f7f8fb;
+	--twin-truck-in: #7611a6;
+	--twin-truck-out: #1688ad;
+	--twin-forklift: #e0a800;
 }
 
 .theme-dark .twin-theme {
@@ -49,4 +59,14 @@
 	--twin-visit: #c561f6;
 	--twin-cleaning: #6474a2;
 	--twin-outline: rgba(0, 0, 0, 0.6);
+	--twin-asphalt: #10131c;
+	--twin-lane: #3d4663;
+	--twin-cold: #5aa2ff;
+	--twin-mild: #3ccf8e;
+	--twin-precool: #3fd4e6;
+	--twin-hold: #f2b233;
+	--twin-truck: #c3cadb;
+	--twin-truck-in: #c561f6;
+	--twin-truck-out: #4cc3e6;
+	--twin-forklift: #ffc533;
 }

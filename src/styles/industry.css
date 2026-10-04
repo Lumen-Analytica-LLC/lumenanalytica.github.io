@@ -1,0 +1,237 @@
+/* Shared layout for the industry landing pages (/healthcare, /cold-chain). */
+.industry .hero {
+	display: grid;
+	gap: 3rem;
+	align-items: center;
+	padding-top: 1rem;
+}
+
+.industry .eyebrow {
+	font-size: var(--text-sm);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--accent-dark);
+}
+
+.industry h1 {
+	font-size: var(--text-3xl);
+	line-height: 1.05;
+	color: var(--gray-0);
+	max-width: 18ch;
+}
+
+.industry .lede {
+	font-size: var(--text-lg);
+	color: var(--gray-300);
+	max-width: 46ch;
+}
+
+.industry .actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1rem 1.5rem;
+}
+
+.industry .secondary {
+	font-weight: 600;
+	color: var(--gray-100);
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+	text-decoration-color: var(--accent-regular);
+}
+
+.industry .secondary:hover {
+	color: var(--accent-dark);
+}
+
+.industry .section {
+	display: grid;
+	gap: 2rem;
+}
+
+.industry .section-header {
+	display: grid;
+	gap: 0.75rem;
+	max-width: 60ch;
+}
+
+.industry .section-header h2 {
+	font-size: var(--text-2xl);
+	color: var(--gray-0);
+}
+
+.industry .section-header p {
+	font-size: var(--text-md);
+	color: var(--gray-300);
+}
+
+.industry .cards,
+.industry .timeline,
+.industry .scenarios {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 1rem;
+}
+
+.industry .card {
+	display: grid;
+	gap: 0.6rem;
+	align-content: start;
+	padding: 1.5rem;
+	border: 1px solid var(--gray-800);
+	border-radius: 1.5rem;
+	background: var(--gradient-subtle);
+	box-shadow: var(--shadow-sm);
+}
+
+.industry .card h3 {
+	font-size: var(--text-lg);
+	color: var(--gray-0);
+}
+
+.industry .card p {
+	color: var(--gray-300);
+}
+
+.industry .step-number {
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	background: var(--accent-regular);
+	color: var(--accent-text-over);
+	font-family: var(--font-brand);
+	font-weight: 700;
+}
+
+.industry .scenarios a {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	height: 100%;
+	padding: 1.1rem 1.4rem;
+	border: 1px solid var(--gray-800);
+	border-radius: 1rem;
+	background: var(--gray-999);
+	color: var(--gray-100);
+	font-weight: 600;
+	text-decoration: none;
+	box-shadow: var(--shadow-sm);
+	transition:
+		.industry border-color var(--theme-transition, 0.2s),
+		transform 0.2s;
+}
+
+.industry .scenarios a:hover {
+	border-color: var(--accent-regular);
+	transform: translateY(-2px);
+}
+
+.industry .scenarios a svg {
+	flex: none;
+	color: var(--accent-dark);
+}
+
+.industry .week {
+	font-size: var(--text-sm);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--accent-dark);
+}
+
+.industry .faqs {
+	display: grid;
+	gap: 0.75rem;
+	max-width: 60rem;
+}
+
+.industry details {
+	border: 1px solid var(--gray-800);
+	border-radius: 1rem;
+	background: var(--gray-999);
+	padding: 1rem 1.4rem;
+}
+
+.industry summary {
+	cursor: pointer;
+	font-weight: 600;
+	color: var(--gray-0);
+}
+
+.industry details p {
+	margin-top: 0.75rem;
+	color: var(--gray-300);
+}
+
+.industry .closing {
+	display: grid;
+	justify-items: center;
+	text-align: center;
+	gap: 1.5rem;
+	padding: 5rem 1.5rem;
+	border-top: 1px solid var(--gray-800);
+	border-bottom: 1px solid var(--gray-800);
+	background-color: var(--gray-999_40);
+	box-shadow: var(--shadow-sm);
+}
+
+.industry .closing h2 {
+	font-size: var(--text-2xl);
+	max-width: 22ch;
+	color: var(--gray-0);
+}
+
+.industry .closing p {
+	max-width: 50ch;
+	color: var(--gray-300);
+}
+
+.industry .closing .actions {
+	justify-content: center;
+}
+
+@media (min-width: 40em) {
+	.industry .cards-4,
+	.industry .scenarios,
+	.industry .timeline {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 50em) {
+	.industry h1 {
+		font-size: var(--text-5xl);
+	}
+
+	.industry .section-header h2,
+	.industry .closing h2 {
+		font-size: var(--text-4xl);
+	}
+
+	.industry .cards-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 64em) {
+	.industry .hero {
+		grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+		gap: 4rem;
+	}
+
+	.industry .cards-4,
+	.industry .timeline {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.industry .scenarios {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}

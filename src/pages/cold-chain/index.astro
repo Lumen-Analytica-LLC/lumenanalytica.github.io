@@ -1,0 +1,235 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Icon from '../../components/Icon.astro';
+import RoiCalculator from '../../components/twin/RoiCalculator.astro';
+import TwinPreview from '../../components/twin/TwinPreview.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/industry.css';
+
+const email = 'insights@lumen-analytica.io';
+const assessmentHref = `mailto:${email}?subject=${encodeURIComponent('Cold chain digital twin assessment')}&body=${encodeURIComponent(
+	'Hello,\n\nWe would like to learn more about a digital twin for our facility.\n\nName:\nCompany:\nFacility location:\nDock doors / trucks per day:\nBiggest dock or yard challenge:\n',
+)}`;
+
+const problems = [
+	{
+		title: 'The yard is full by 10 a.m.',
+		body: 'Trucks come off the bridge in waves, every door fills at once, and the detention clock starts on the ones still waiting.',
+	},
+	{
+		title: 'Pallets sit warm on the dock',
+		body: 'When the crew races to empty trailers, put-away falls behind, and product loses shelf life a few degrees at a time.',
+	},
+	{
+		title: 'Pre-cool and inspection jam everything',
+		body: 'A full tunnel or a held load blocks the pallets behind it, and the backup spreads across the dock.',
+	},
+	{
+		title: 'Peak season breaks the plan',
+		body: 'The staffing and door schedule that work in the off-season fall apart when the import peak hits.',
+	},
+];
+
+const steps = [
+	{
+		title: 'Mirror',
+		body: 'We build a model of your facility from your own data: gate and yard logs, dock appointments, warehouse receipts and shipments, labor rosters and, where you have them, temperature sensors.',
+	},
+	{
+		title: 'Test',
+		body: 'Your team tries changes on the twin first: appointment windows, forklift staffing by hour, put-away rules, door assignments or pre-cool capacity. Every scenario replays the same day, so comparisons are fair.',
+	},
+	{
+		title: 'Act',
+		body: 'You get the changes worth making before the season, with the expected effect on truck turns, detention and time out of temperature, and a way to check the result after rollout.',
+	},
+];
+
+const scenarios = [
+	{ question: 'What if trucks booked appointments instead of arriving in bridge waves?', href: '/cold-chain/demo/?a=appointments' },
+	{ question: 'Should forklifts unload first, or put away first?', href: '/cold-chain/demo/?pr=balanced&at=1300' },
+	{ question: 'How many drivers do we need for the afternoon wave?', href: '/cold-chain/demo/?f=8&at=1300' },
+	{ question: 'What happens when two forklifts go down mid-morning?', href: '/cold-chain/demo/?fd=1&at=0845' },
+	{ question: 'Can the dock survive a 40% peak-season surge?', href: '/cold-chain/demo/?su=1' },
+	{ question: 'Is a bigger pre-cool tunnel worth it?', href: '/cold-chain/demo/?pc=72' },
+];
+
+const pilot = [
+	{
+		week: 'Week 1',
+		title: 'Connect',
+		body: 'We walk your dock with your supervisors, then collect a few weeks of gate logs, dock appointments, warehouse receipts and shipments, and labor schedules. Most WMS and yard systems can export these as standard reports.',
+	},
+	{
+		week: 'Week 2',
+		title: 'Build and calibrate',
+		body: 'We build the twin of your facility and check it against real days until truck turns, detention and dock dwell match what actually happened.',
+	},
+	{
+		week: 'Week 3',
+		title: 'Test with your team',
+		body: 'Working sessions with your operations manager and shift leads to try the changes you have been debating, plus a few you have not.',
+	},
+	{
+		week: 'Week 4',
+		title: 'Readout',
+		body: 'Recommended changes, expected impact on detention and product temperature, and a plan for the next peak. You keep the twin.',
+	},
+];
+
+const faqs = [
+	{
+		q: 'Do we need to install new software?',
+		a: 'No. The pilot runs on data exports and a hosted twin your team can open in a browser. Nothing connects to your WMS or yard system unless you want it to later.',
+	},
+	{
+		q: 'What data do you need?',
+		a: 'Gate or yard check-in and check-out times, dock appointments, receipts and shipments with timestamps, your door and room layout, and labor schedules. Temperature sensor data helps but is not required.',
+	},
+	{
+		q: 'Does it handle pre-cooling, inspections and multiple temperature zones?',
+		a: 'Yes. The twin models each room and its capacity, pre-cooling time by commodity, loads held for inspection, and how long pallets sit on the dock before they reach temperature.',
+	},
+	{
+		q: 'Is this only for produce?',
+		a: 'No. It works for any operation where trucks queue for doors and product moves through limited space and labor: cold storage, 3PL warehouses, cross-docks and distribution centers.',
+	},
+];
+---
+
+<BaseLayout
+	title="Cold Chain Digital Twins | Lumen Analytica"
+	description="Digital twins for cold storage, produce cross-docks and 3PL warehouses. Test dock schedules, forklift staffing and put-away rules on a live model of your facility before peak season."
+>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper hero">
+			<div class="hero-copy stack gap-8">
+				<p class="eyebrow">Digital twins for cold chain and 3PL operations</p>
+				<h1>Faster turns. Colder pallets. Less detention.</h1>
+				<p class="lede">
+					We build a working model of your dock, a digital twin, so you can test door schedules, forklift staffing and
+					put-away rules before the season hits, and know what they'll do to truck turns, detention and product
+					temperature.
+				</p>
+				<div class="actions">
+					<CallToAction href="/cold-chain/demo/">
+						Try the cross-dock twin
+						<Icon icon="arrow-right" size="1.2em" />
+					</CallToAction>
+					<a class="secondary" href={assessmentHref}>Book a dock assessment</a>
+				</div>
+			</div>
+			<TwinPreview scenario="cold-chain" />
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section">
+				<header class="section-header">
+					<h2>Sound familiar?</h2>
+					<p>Most dock problems aren't a headcount problem. They come from when trucks arrive and what the crew works on first.</p>
+				</header>
+				<ul class="cards cards-4">
+					{
+						problems.map((problem) => (
+							<li class="card">
+								<h3>{problem.title}</h3>
+								<p>{problem.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>How a dock twin works</h2>
+					<p>A dashboard tells you what happened. A twin shows you what would happen.</p>
+				</header>
+				<ol class="cards cards-3 steps">
+					{
+						steps.map((step, i) => (
+							<li class="card">
+								<span class="step-number">{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.body}</p>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>Questions you can answer before peak season</h2>
+					<p>Each one opens the demo twin with that change applied. The same trucks, the same day: only your change is different.</p>
+				</header>
+				<ul class="scenarios">
+					{
+						scenarios.map((scenario) => (
+							<li>
+								<a href={scenario.href}>
+									<span>{scenario.question}</span>
+									<Icon icon="arrow-right" size="1.1em" />
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section" id="roi">
+				<header class="section-header">
+					<h2>What's a faster dock worth?</h2>
+					<p>Put in your own numbers for a rough annual estimate. The pilot replaces these assumptions with measured results.</p>
+				</header>
+				<RoiCalculator model="cold-chain" email={email} />
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>A 30-day pilot</h2>
+					<p>One facility, one month, a fixed scope. You finish with a calibrated twin and a plan for your next peak.</p>
+				</header>
+				<ol class="timeline">
+					{
+						pilot.map((item) => (
+							<li class="card">
+								<span class="week">{item.week}</span>
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>Common questions</h2>
+				</header>
+				<div class="faqs">
+					{
+						faqs.map((faq) => (
+							<details>
+								<summary>{faq.q}</summary>
+								<p>{faq.a}</p>
+							</details>
+						))
+					}
+				</div>
+			</section>
+		</main>
+
+		<aside class="closing">
+			<h2>See your dock's day before it happens</h2>
+			<p>Tell us about your facility and the problem you'd most like to solve. We'll show you what a twin of it would look like.</p>
+			<div class="actions">
+				<CallToAction href={assessmentHref}>
+					Book a dock assessment
+					<Icon icon="paper-plane-tilt" size="1.2em" />
+				</CallToAction>
+				<a class="secondary" href="/cold-chain/demo/">Try the demo first</a>
+			</div>
+		</aside>
+	</div>
+</BaseLayout>

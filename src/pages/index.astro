@@ -10,6 +10,7 @@ import Icon from '../components/Icon.astro';
 import Pill from '../components/Pill.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import Skills from '../components/Skills.astro';
+import ClinicTwinPreview from '../components/twin/ClinicTwinPreview.astro';
 // Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
 
@@ -44,7 +45,9 @@ const projects = (await getCollection('services'))
 					</div>
 				</Hero>
 
-				<img src="/assets/revenue-detailed.svg" alt="Interactive revenue analysis dashboard showing detailed financial data trends and forecasting insights" loading="lazy" />
+				<div class="hero-twin">
+					<ClinicTwinPreview />
+				</div>
 			</header>
 
 			<Skills />
@@ -129,18 +132,15 @@ const projects = (await getCollection('services'))
 		display: none;
 	}
 
-	.hero img {
-		aspect-ratio: 5 / 4;
-		object-fit: cover;
-		object-position: top;
-		border-radius: 1.5rem;
-		box-shadow: var(--shadow-md);
+	.hero-twin {
+		width: 100%;
 	}
 
 	@media (min-width: 50em) {
 		.hero {
 			display: grid;
-			grid-template-columns: 6fr 4fr;
+			grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+			align-items: center;
 			padding-inline: 2.5rem;
 			gap: 3.75rem;
 		}
@@ -148,18 +148,13 @@ const projects = (await getCollection('services'))
 		.roles {
 			margin-top: 0.5rem;
 			display: flex;
+			flex-wrap: wrap;
 			gap: 0.5rem;
 		}
 
 		.hero-cta {
 			margin-top: 1.5rem;
 			display: block;
-		}
-
-		.hero img {
-			aspect-ratio: 3 / 4;
-			border-radius: 4.5rem;
-			object-fit: cover;
 		}
 	}
 

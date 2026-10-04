@@ -1,0 +1,597 @@
+---
+import { DEFAULT_CONFIG, DISRUPTION_WINDOW, formatClock, MAX_PROVIDERS, MAX_ROOMS, TEMPLATES } from '../../twin/scenarios/clinic/model';
+
+const speeds = [
+	{ value: 3, label: '3×' },
+	{ value: 8, label: '8×' },
+	{ value: 15, label: '15×' },
+	{ value: 30, label: '30×' },
+];
+const defaultSpeed = 8;
+
+const kpis = [
+	{ key: 'avgWait', label: 'Avg wait to provider' },
+	{ key: 'p90Wait', label: '90th percentile wait' },
+	{ key: 'waiting', label: 'In the waiting room' },
+	{ key: 'lwbs', label: 'Left without being seen' },
+	{ key: 'utilization', label: 'Provider utilization' },
+	{ key: 'finish', label: 'Last patient out' },
+];
+
+const legend = [
+	{ token: 'ok', label: 'Waiting < 15 min' },
+	{ token: 'warn', label: '15–30 min' },
+	{ token: 'bad', label: '30+ min' },
+	{ token: 'seen', label: 'Seen by provider' },
+	{ token: 'provider', label: 'Provider' },
+	{ token: 'assistant', label: 'Medical assistant' },
+	{ token: 'clerk', label: 'Front desk' },
+];
+
+const roomLegend = [
+	{ token: 'rooming', label: 'Rooming' },
+	{ token: 'ready', label: 'Waiting for provider' },
+	{ token: 'visit', label: 'With provider' },
+	{ token: 'cleaning', label: 'Turnover' },
+];
+
+const [awayStart, awayEnd] = DISRUPTION_WINDOW.map(formatClock);
+---
+
+<section class="twin" data-clinic-twin aria-label="Clinic digital twin simulation">
+	<div class="toolbar">
+		<div class="clock" aria-label="Simulated time">
+			<span class="clock-label">Clinic time</span>
+			<span class="clock-value" data-clock>7:30 AM</span>
+		</div>
+		<div class="transport">
+			<button type="button" class="btn btn-primary" data-play aria-pressed="true">
+				<span data-label>Pause</span>
+			</button>
+			<button type="button" class="btn" data-restart>Restart day</button>
+			<button type="button" class="btn" data-new-day title="Same settings, a different day of patients">New day</button>
+		</div>
+	</div>
+
+	<div class="layout">
+		<div class="stage">
+			<div class="floor-wrap">
+				<canvas data-floor role="img" aria-label="Top-down floor plan of the clinic with patients and staff moving between the front desk, waiting room and exam rooms"></canvas>
+			</div>
+			<ul class="legend" aria-label="People">
+				{
+					legend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token})`} />
+							{item.label}
+						</li>
+					))
+				}
+			</ul>
+			<ul class="legend legend-rooms" aria-label="Exam room status">
+				<li class="legend-title">Exam room light:</li>
+				{
+					roomLegend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token})`} />
+							{item.label}
+						</li>
+					))
+				}
+			</ul>
+
+			<div class="panel">
+				<header class="panel-header">
+					<h2>Provider availability</h2>
+					<ul class="legend legend-inline" aria-label="Board legend">
+						<li><span class="swatch swatch-booked"></span>Booked</li>
+						<li><span class="swatch" style="background: var(--twin-visit)"></span>With patient</li>
+						<li><span class="swatch swatch-charting"></span>Charting</li>
+						<li><span class="swatch swatch-away"></span>Away</li>
+					</ul>
+				</header>
+				<canvas data-board class="board" role="img" aria-label="Timeline per provider comparing booked appointments with actual patient time, charting and time away"></canvas>
+			</div>
+		</div>
+
+		<aside class="side">
+			<div class="kpis" aria-live="off">
+				{
+					kpis.map((kpi) => (
+						<div class="kpi" data-kpi={kpi.key} data-tone="neutral">
+							<span class="kpi-label">{kpi.label}</span>
+							<span class="kpi-value" data-value>–</span>
+							<span class="kpi-sub" data-sub />
+						</div>
+					))
+				}
+			</div>
+
+			<div class="summary" data-summary role="status" hidden>
+				<strong>Day complete.</strong>
+				<span data-summary-text></span>
+			</div>
+
+			<form class="panel controls" data-controls>
+				<h2>What if…</h2>
+				<p class="hint">Changes replay the day up to now with the same patients, so you see only the effect of your change.</p>
+
+				<label class="field">
+					<span class="field-row"><span>Providers</span><output for="ct-providers"></output></span>
+					<input id="ct-providers" name="providers" type="range" min="2" max={MAX_PROVIDERS} step="1" value={DEFAULT_CONFIG.providers} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>Exam rooms</span><output for="ct-rooms"></output></span>
+					<input id="ct-rooms" name="rooms" type="range" min="3" max={MAX_ROOMS} step="1" value={DEFAULT_CONFIG.rooms} />
+				</label>
+
+				<fieldset class="field">
+					<legend>Appointment template</legend>
+					<div class="segmented">
+						{
+							Object.entries(TEMPLATES).map(([value, template]) => (
+								<label>
+									<input type="radio" name="template" value={value} checked={value === DEFAULT_CONFIG.template} />
+									<span>{template.label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<label class="field">
+					<span class="field-row"><span>Double-booked slots</span><output for="ct-db" data-suffix="%"></output></span>
+					<input id="ct-db" name="doubleBookPct" type="range" min="0" max="30" step="5" value={DEFAULT_CONFIG.doubleBookPct} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>No-show rate</span><output for="ct-ns" data-suffix="%"></output></span>
+					<input id="ct-ns" name="noShowPct" type="range" min="0" max="30" step="2" value={DEFAULT_CONFIG.noShowPct} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>Walk-ins per hour</span><output for="ct-wi"></output></span>
+					<input id="ct-wi" name="walkInsPerHour" type="range" min="0" max="6" step="0.5" value={DEFAULT_CONFIG.walkInsPerHour} />
+				</label>
+
+				<label class="check">
+					<input name="disruption" type="checkbox" checked={DEFAULT_CONFIG.disruption} />
+					<span>Pull Dr. Patel away {awayStart}–{awayEnd}</span>
+				</label>
+
+				<fieldset class="field">
+					<legend>Playback speed</legend>
+					<div class="segmented">
+						{
+							speeds.map((speed) => (
+								<label>
+									<input type="radio" name="speed" value={speed.value} checked={speed.value === defaultSpeed} />
+									<span>{speed.label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+			</form>
+
+			<div class="panel">
+				<h2>Events</h2>
+				<ol class="log" data-log></ol>
+			</div>
+		</aside>
+	</div>
+</section>
+
+<script>
+	import { mountClinicTwin } from '../../twin/scenarios/clinic/app';
+
+	for (const root of document.querySelectorAll<HTMLElement>('[data-clinic-twin]')) mountClinicTwin(root);
+</script>
+
+<style>
+	.twin {
+		--twin-bg: #eef0f5;
+		--twin-floor: #ffffff;
+		--twin-floor-alt: #f7f4fb;
+		--twin-corridor: #e6e9f0;
+		--twin-room: #fbfbfd;
+		--twin-wall: #505d84;
+		--twin-furniture: #dfe3ec;
+		--twin-furniture-strong: #c3cadb;
+		--twin-label: #6474a2;
+		--twin-label-strong: #283044;
+		--twin-ok: #1f9d63;
+		--twin-warn: #d98a00;
+		--twin-bad: #d43c3c;
+		--twin-seen: #a3acc8;
+		--twin-provider: #7611a6;
+		--twin-assistant: #1688ad;
+		--twin-clerk: #5f6f99;
+		--twin-away: #8490b5;
+		--twin-rooming: #2b7bd9;
+		--twin-ready: #d98a00;
+		--twin-visit: #7611a6;
+		--twin-cleaning: #8490b5;
+		--twin-outline: rgba(9, 11, 17, 0.45);
+
+		display: grid;
+		gap: 1rem;
+		color: var(--gray-200);
+	}
+
+	:global(.theme-dark) .twin {
+		--twin-bg: #0b0e16;
+		--twin-floor: #161b28;
+		--twin-floor-alt: #1a1b2e;
+		--twin-corridor: #1f2536;
+		--twin-room: #131826;
+		--twin-wall: #8490b5;
+		--twin-furniture: #2a3247;
+		--twin-furniture-strong: #3d4663;
+		--twin-label: #8490b5;
+		--twin-label-strong: #e3e6ee;
+		--twin-ok: #3ccf8e;
+		--twin-warn: #f2b233;
+		--twin-bad: #f06464;
+		--twin-seen: #6474a2;
+		--twin-provider: #c561f6;
+		--twin-assistant: #4cc3e6;
+		--twin-clerk: #8fa0cf;
+		--twin-away: #6474a2;
+		--twin-rooming: #5aa2ff;
+		--twin-ready: #f2b233;
+		--twin-visit: #c561f6;
+		--twin-cleaning: #6474a2;
+		--twin-outline: rgba(0, 0, 0, 0.6);
+	}
+
+	h2 {
+		font-size: var(--text-md);
+		color: var(--gray-0);
+	}
+
+	.toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.clock {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+	}
+
+	.clock-label {
+		font-size: var(--text-sm);
+		color: var(--gray-400);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.clock-value {
+		font-family: var(--font-brand);
+		font-size: var(--text-xl);
+		font-weight: 600;
+		color: var(--gray-0);
+		font-variant-numeric: tabular-nums;
+		min-width: 6.5ch;
+	}
+
+	.transport {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.btn {
+		border: 1px solid var(--gray-800);
+		background: var(--gray-999);
+		color: var(--gray-100);
+		border-radius: 999rem;
+		padding: 0.45rem 1rem;
+		font: inherit;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: var(--shadow-sm);
+	}
+
+	.btn:hover {
+		border-color: var(--accent-regular);
+	}
+
+	.btn-primary {
+		background: var(--accent-regular);
+		border-color: var(--accent-regular);
+		color: var(--accent-text-over);
+		min-width: 5.5rem;
+	}
+
+	.layout {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.stage,
+	.side {
+		display: grid;
+		gap: 1rem;
+		align-content: start;
+		min-width: 0;
+	}
+
+	.floor-wrap {
+		border-radius: 1rem;
+		overflow: hidden;
+		border: 1px solid var(--gray-800);
+		box-shadow: var(--shadow-md);
+		background: var(--twin-bg);
+	}
+
+	canvas {
+		display: block;
+		width: 100%;
+	}
+
+	[data-floor] {
+		aspect-ratio: 518 / 292;
+	}
+
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem 1rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--gray-400);
+	}
+
+	.legend-rooms {
+		margin-top: -0.6rem;
+	}
+
+	.legend-title {
+		color: var(--gray-300);
+	}
+
+	.legend li {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.swatch {
+		width: 0.75rem;
+		height: 0.75rem;
+		border-radius: 999rem;
+		flex: none;
+	}
+
+	.legend-inline .swatch {
+		border-radius: 0.2rem;
+	}
+
+	.swatch-booked {
+		background: color-mix(in srgb, var(--twin-provider) 25%, transparent);
+	}
+
+	.swatch-charting {
+		background: color-mix(in srgb, var(--twin-visit) 35%, transparent);
+	}
+
+	.swatch-away {
+		background: repeating-linear-gradient(135deg, var(--twin-away) 0 2px, transparent 2px 5px);
+	}
+
+	.panel {
+		display: grid;
+		gap: 0.75rem;
+		padding: 1rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 1rem;
+		background: var(--gray-999);
+		box-shadow: var(--shadow-sm);
+		min-width: 0;
+	}
+
+	.panel-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.kpis {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+
+	.kpi {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.75rem 0.85rem;
+		border: 1px solid var(--gray-800);
+		border-left: 4px solid var(--kpi-color, var(--gray-700));
+		border-radius: 0.75rem;
+		background: var(--gray-999);
+	}
+
+	.kpi[data-tone='good'] {
+		--kpi-color: var(--twin-ok);
+	}
+	.kpi[data-tone='warn'] {
+		--kpi-color: var(--twin-warn);
+	}
+	.kpi[data-tone='bad'] {
+		--kpi-color: var(--twin-bad);
+	}
+
+	.kpi-label {
+		font-size: 0.8rem;
+		color: var(--gray-400);
+	}
+
+	.kpi-value {
+		font-family: var(--font-brand);
+		font-size: var(--text-lg);
+		font-weight: 600;
+		color: var(--gray-0);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.kpi-sub {
+		font-size: 0.75rem;
+		color: var(--gray-400);
+		min-height: 1.2em;
+	}
+
+	.summary {
+		padding: 0.85rem 1rem;
+		border-radius: 0.75rem;
+		background: color-mix(in srgb, var(--accent-regular) 12%, var(--gray-999));
+		border: 1px solid var(--accent-regular);
+		font-size: var(--text-sm);
+	}
+
+	.summary[hidden] {
+		display: none;
+	}
+
+	.controls {
+		gap: 1rem;
+	}
+
+	.hint {
+		font-size: 0.8rem;
+		color: var(--gray-400);
+		margin-top: -0.5rem;
+	}
+
+	.field {
+		display: grid;
+		gap: 0.35rem;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font-size: var(--text-sm);
+	}
+
+	.field legend {
+		padding: 0;
+		margin-bottom: 0.35rem;
+	}
+
+	.field-row {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	output {
+		font-weight: 600;
+		color: var(--gray-0);
+		font-variant-numeric: tabular-nums;
+	}
+
+	input[type='range'] {
+		width: 100%;
+		accent-color: var(--accent-regular);
+	}
+
+	.segmented {
+		display: flex;
+		border: 1px solid var(--gray-800);
+		border-radius: 999rem;
+		padding: 0.2rem;
+		gap: 0.2rem;
+	}
+
+	.segmented label {
+		flex: 1;
+		position: relative;
+	}
+
+	.segmented input {
+		position: absolute;
+		opacity: 0;
+		inset: 0;
+		cursor: pointer;
+	}
+
+	.segmented span {
+		display: block;
+		text-align: center;
+		padding: 0.3rem 0.4rem;
+		border-radius: 999rem;
+		font-size: 0.8rem;
+		white-space: nowrap;
+	}
+
+	.segmented input:checked + span {
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font-weight: 600;
+	}
+
+	.segmented input:focus-visible + span {
+		outline: 2px solid var(--accent-regular);
+		outline-offset: 2px;
+	}
+
+	.check {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		font-size: var(--text-sm);
+	}
+
+	.check input {
+		accent-color: var(--accent-regular);
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.log {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.4rem;
+		font-size: 0.8rem;
+		min-height: 6rem;
+	}
+
+	.log li {
+		padding-left: 0.6rem;
+		border-left: 3px solid var(--gray-700);
+	}
+
+	.log li[data-tone='warn'] {
+		border-color: var(--twin-warn);
+	}
+	.log li[data-tone='bad'] {
+		border-color: var(--twin-bad);
+	}
+	.log li[data-tone='good'] {
+		border-color: var(--twin-ok);
+	}
+
+	.log time {
+		font-weight: 600;
+		color: var(--gray-0);
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (min-width: 64em) {
+		.layout {
+			grid-template-columns: minmax(0, 1fr) 20rem;
+		}
+	}
+</style>

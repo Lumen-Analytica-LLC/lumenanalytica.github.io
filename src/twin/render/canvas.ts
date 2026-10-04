@@ -23,6 +23,17 @@ export const THEME_TOKENS = [
 	'visit',
 	'cleaning',
 	'outline',
+	// Cold chain
+	'asphalt',
+	'lane',
+	'cold',
+	'mild',
+	'precool',
+	'hold',
+	'truck',
+	'truck-in',
+	'truck-out',
+	'forklift',
 ] as const;
 
 export type ThemeToken = (typeof THEME_TOKENS)[number];

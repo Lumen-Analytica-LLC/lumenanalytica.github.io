@@ -1,114 +1,217 @@
 ---
-import { getCollection } from 'astro:content';
-// Component Imports
 import CallToAction from '../components/CallToAction.astro';
-// Page section components
 import ContactCTA from '../components/ContactCTA.astro';
-import Grid from '../components/Grid.astro';
-import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
-import Pill from '../components/Pill.astro';
-import PortfolioPreview from '../components/PortfolioPreview.astro';
-import Skills from '../components/Skills.astro';
 import TwinPreview from '../components/twin/TwinPreview.astro';
-// Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
+import { bookingHref, CONTACT, contactHref } from '../config/contact';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/industry.css';
 
-// Content Fetching: List services sorted by order field
-const projects = (await getCollection('services'))
-	.sort((a, b) => (a.data.order || 999) - (b.data.order || 999))
-	.slice(0, 4);
+const industries = [
+	{
+		title: 'Clinics and hospitals',
+		body: 'Waiting rooms, provider schedules, exam rooms and walk-ins. Find the template, staffing and room changes that shorten waits without adding hours.',
+		points: ['Shorter waits to see a provider', 'Fewer patients leaving without being seen', 'Days that end on time'],
+		href: '/healthcare/',
+		demo: '/healthcare/demo/',
+		demoLabel: 'Try the clinic twin',
+	},
+	{
+		title: 'Cold storage and 3PL',
+		body: 'Yard queues, dock doors, forklifts, pre-cooling and inspections. Find the appointment, staffing and put-away rules that turn trucks faster and keep product cold.',
+		points: ['Faster truck turns, less detention', 'Fewer pallets warming on the dock', 'A plan that survives peak season'],
+		href: '/cold-chain/',
+		demo: '/cold-chain/demo/',
+		demoLabel: 'Try the cross-dock twin',
+	},
+];
 
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+// Averages from the demo twins' own runs (20 simulated clinic days, 8 simulated dock days).
+const results = [
+	{ before: '21 min', after: '15 min', label: 'Average wait to see a provider', note: 'Clinic twin: hourly block booking → staggered template' },
+	{ before: '47 min', after: '35 min', label: '90th percentile wait', note: 'Same clinic, same patients' },
+	{ before: '$1,790', after: '$24', label: 'Detention per day', note: 'Cross-dock twin: bridge waves → appointments, balanced priority, 8 drivers' },
+	{ before: '261', after: '42', label: 'Pallets 30+ min on the dock', note: 'Same dock, same trucks' },
+];
+
+const reasons = [
+	{
+		title: 'Test before you change',
+		body: 'Try a new schedule, staffing plan or rule on the twin first. Keep the changes that work; skip the ones that would have backfired.',
+	},
+	{
+		title: 'Fair comparisons',
+		body: 'Every scenario replays the same day with the same patients or trucks, so the only difference you see is the change you made.',
+	},
+	{
+		title: 'Built from your own data',
+		body: 'Schedules, timestamps and layouts you already have. No new software to install, and nothing touches your systems unless you want it to.',
+	},
+];
+
+const steps = [
+	{ title: 'Assess', body: 'Walk the floor or dock, agree on the problem and the numbers that matter.', service: 'operations-research' },
+	{ title: 'Connect', body: 'Pull schedules, timestamps and layouts into a clean, governed dataset.', service: 'data-platform' },
+	{ title: 'Model', body: 'Build and calibrate the twin until it matches what really happened.', service: 'operations-research' },
+	{ title: 'Optimize', body: 'Test changes with your team and price the impact.', service: 'accounting-operations' },
+	{ title: 'Operate', body: 'Keep the twin current for re-planning before each season.', service: 'software-development' },
+];
 ---
 
-<BaseLayout>
-	<div class="stack gap-20 lg:gap-48">
-		<div class="wrapper stack gap-8 lg:gap-20">
-			<header class="hero">
-				<Hero
-					title="Hello, we are Lumen Analytica."
-					tagline="We transform complex data into strategic advantages, helping organizations make faster, evidence-based decisions that drive measurable results."
-					align="start"
-				>
-					<div class="roles">
-						<Pill><Icon icon="terminal-window" size="1.33em" /> Save 20+ Hours/Week</Pill>
-						<Pill><Icon icon="strategy" size="1.33em" /> Data-Driven Insights</Pill>
-						<Pill><Icon icon="rocket-launch" size="1.33em" /> Enterprise-Ready</Pill>
-					</div>
-					<div class="hero-cta">
-						<CallToAction href="/services/">
-							Explore Our Services
-							<Icon icon="arrow-right" size="1.2em" />
-						</CallToAction>
-					</div>
-				</Hero>
-
-				<div class="hero-twin">
-					<TwinPreview scenario="clinic" />
-				</div>
-			</header>
-
-			<Skills />
-		</div>
-
-		<main class="wrapper stack gap-20 lg:gap-48">
-			<section class="section with-background with-cta">
-				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Service Catalog</h3>
-					<p>Take a look below at some of our services we specialize in.</p>
-				</header>
-
-				<div class="gallery">
-					<Grid variant="offset">
-						{
-							projects.map((project) => (
-								<li>
-									<PortfolioPreview project={project} />
-								</li>
-							))
-						}
-					</Grid>
-				</div>
-
-				<div class="cta">
-					<CallToAction href="/services/">
-						View All
+<BaseLayout
+	title="Lumen Analytica | Operational Digital Twins for South Texas"
+	description="Lumen Analytica builds digital twins of clinics, cold storage docks and warehouses across the Rio Grande Valley and South Texas, so you can test schedules, staffing and layouts before you change them."
+>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper hero">
+			<div class="hero-copy stack gap-8">
+				<p class="eyebrow">Operational digital twins · Rio Grande Valley &amp; South Texas</p>
+				<h1>See your operation's day before it happens.</h1>
+				<p class="lede">
+					We build working models of clinics, cold storage docks and warehouses, so you can test schedules, staffing and
+					layouts before you change them, and know what they'll do to waits, truck turns and costs.
+				</p>
+				<div class="actions">
+					<CallToAction href={bookingHref(undefined, 'home')}>
+						{CONTACT.bookingUrl ? 'Book a 20-minute call' : 'Talk to us'}
 						<Icon icon="arrow-right" size="1.2em" />
 					</CallToAction>
+					<a class="secondary" href="#industries">See what we model</a>
 				</div>
-			</section>
+			</div>
 
-			<section class="section with-background bg-variant">
-				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Proven Impact</h3>
+			<div class="hero-twins" data-twin-tabs>
+				<div class="tabs" role="tablist" aria-label="Live twin">
+					<button type="button" role="tab" id="tab-clinic" aria-controls="panel-clinic" aria-selected="true">Clinic</button>
+					<button type="button" role="tab" id="tab-cold" aria-controls="panel-cold" aria-selected="false" tabindex="-1">
+						Cold chain
+					</button>
+				</div>
+				<div role="tabpanel" id="panel-clinic" aria-labelledby="tab-clinic">
+					<TwinPreview scenario="clinic" />
+				</div>
+				<div role="tabpanel" id="panel-cold" aria-labelledby="tab-cold" hidden>
+					<TwinPreview scenario="cold-chain" />
+				</div>
+			</div>
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section" id="industries">
+				<header class="section-header">
+					<h2>Where waiting costs money</h2>
 					<p>
-						Real results from our client engagements. We measure success through tangible outcomes
-						and lasting improvements.
+						Patients waiting for a provider and trucks waiting for a door are the same problem: arrivals, limited capacity
+						and a schedule. That's what our twins model.
 					</p>
 				</header>
+				<ul class="industry-cards">
+					{
+						industries.map((industry) => (
+							<li class="card industry-card">
+								<h3>{industry.title}</h3>
+								<p>{industry.body}</p>
+								<ul class="points">
+									{industry.points.map((point) => <li>{point}</li>)}
+								</ul>
+								<div class="card-actions">
+									<a class="card-primary" href={industry.href}>
+										Learn more <Icon icon="arrow-right" size="1em" />
+									</a>
+									<a class="secondary" href={industry.demo}>
+										{industry.demoLabel}
+									</a>
+								</div>
+							</li>
+						))
+					}
+					<li class="card industry-card education">
+						<h3>Education</h3>
+						<p>
+							Registration lines, financial aid and advising offices, and campus operations follow the same pattern. We're
+							looking for campus partners for research and student analyst projects.
+						</p>
+						<div class="card-actions">
+							<a class="secondary" href={contactHref('education', 'home')}>Talk to us about partnering</a>
+						</div>
+					</li>
+				</ul>
+			</section>
 
-				<div class="gallery">
-					<Grid variant="small">
-						{
-							[
-								{ metric: '40%', description: 'Reduction in Processing Time' },
-								{ metric: '$2.5M+', description: 'Annual Cost Savings' },
-								{ metric: '99.8%', description: 'Data Accuracy Achieved' },
-								{ metric: '10x', description: 'Faster Reporting' },
-								{ metric: '500+', description: 'Processes Automated' }
-							].map((result) => (
-								<li class="mention-card">
-									<div class="result-content">
-										<p class="result-metric">{result.metric}</p>
-										<p class="result-description">{result.description}</p>
-									</div>
-								</li>
-							))
-						}
-					</Grid>
+			<section class="section">
+				<header class="section-header">
+					<h2>What the demo twins show</h2>
+					<p>The same simulated day, before and after one set of changes. These are results from our demo twins, not client results.</p>
+				</header>
+				<ul class="results">
+					{
+						results.map((result) => (
+							<li class="card result">
+								<p class="result-label">{result.label}</p>
+								<p class="result-values">
+									<span class="before">{result.before}</span>
+									<Icon icon="arrow-right" size="1em" />
+									<span class="after">{result.after}</span>
+								</p>
+								<p class="result-note">{result.note}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>Why a twin, not another dashboard</h2>
+					<p>A dashboard tells you what happened. A twin shows you what would happen.</p>
+				</header>
+				<ul class="cards cards-3">
+					{
+						reasons.map((reason) => (
+							<li class="card">
+								<h3>{reason.title}</h3>
+								<p>{reason.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>How we build a twin</h2>
+					<p>Five steps, from walking your floor to keeping the model current. Each one draws on a service we've offered for years.</p>
+				</header>
+				<ol class="build-steps">
+					{
+						steps.map((step, i) => (
+							<li class="card">
+								<span class="step-number">{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.body}</p>
+								<a class="step-link" href={`/services/${step.service}/`}>
+									How we do it
+								</a>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="card region">
+				<div class="stack gap-4">
+					<h2>Local to South Texas</h2>
+					<p>
+						We work with clinics, health centers, cold storage operators and 3PLs across the Rio Grande Valley, from
+						Brownsville and Harlingen to McAllen, Pharr and Edinburg, and up the corridor to San Antonio and Austin. We come
+						to you: the best twins start with walking the floor or the dock with the people who run it.
+					</p>
 				</div>
+				<ul class="places" aria-label="Service area">
+					<li>Rio Grande Valley</li>
+					<li>San Antonio</li>
+					<li>Austin</li>
+				</ul>
 			</section>
 		</main>
 
@@ -116,175 +219,228 @@ const projects = (await getCollection('services'))
 	</div>
 </BaseLayout>
 
+<script>
+	// Hero toggle between the clinic and cold chain twins (only the visible one animates).
+	for (const tabs of document.querySelectorAll<HTMLElement>('[data-twin-tabs]')) {
+		const buttons = [...tabs.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const select = (button: HTMLButtonElement) => {
+			for (const other of buttons) {
+				const selected = other === button;
+				other.setAttribute('aria-selected', String(selected));
+				other.tabIndex = selected ? 0 : -1;
+				document.getElementById(other.getAttribute('aria-controls')!)!.hidden = !selected;
+			}
+		};
+		buttons.forEach((button, i) => {
+			button.addEventListener('click', () => select(button));
+			button.addEventListener('keydown', (event) => {
+				if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+				const next = buttons[(i + (event.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length];
+				select(next);
+				next.focus();
+			});
+		});
+	}
+</script>
+
 <style>
-	.hero {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 2rem;
-	}
-
-	.roles {
-		display: none;
-	}
-
-	.hero-cta {
-		display: none;
-	}
-
-	.hero-twin {
-		width: 100%;
-	}
-
-	@media (min-width: 50em) {
-		.hero {
-			display: grid;
-			grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-			align-items: center;
-			padding-inline: 2.5rem;
-			gap: 3.75rem;
-		}
-
-		.roles {
-			margin-top: 0.5rem;
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
-		}
-
-		.hero-cta {
-			margin-top: 1.5rem;
-			display: block;
-		}
-	}
-
-	/* ====================================================== */
-
-	.section {
+	.hero-twins {
 		display: grid;
-		gap: 2rem;
+		gap: 0.75rem;
+		min-width: 0;
 	}
 
-	.with-background {
-		position: relative;
-	}
-
-	.with-background::before {
-		--hero-bg: var(--bg-image-subtle-2);
-
-		content: '';
-		position: absolute;
-		pointer-events: none;
-		left: 50%;
-		width: 100vw;
-		aspect-ratio: calc(2.25 / var(--bg-scale));
-		top: 0;
-		transform: translateY(-75%) translateX(-50%);
-		background:
-			url('/assets/backgrounds/noise.png') top center/220px repeat,
-			var(--hero-bg) center center / var(--bg-gradient-size) no-repeat,
-			var(--gray-999);
-		background-blend-mode: overlay, normal, normal, normal;
-		mix-blend-mode: var(--bg-blend-mode);
-		z-index: -1;
-	}
-
-	.with-background.bg-variant::before {
-		--hero-bg: var(--bg-image-subtle-1);
-	}
-
-	.section-header {
-		justify-self: center;
-		text-align: center;
-		max-width: 50ch;
-		font-size: var(--text-md);
-		color: var(--gray-300);
-	}
-
-	.section-header h3 {
-		font-size: var(--text-2xl);
-	}
-
-	@media (min-width: 50em) {
-		.section {
-			grid-template-columns: repeat(4, 1fr);
-			grid-template-areas: 'header header header header' 'gallery gallery gallery gallery';
-			gap: 5rem;
-		}
-
-		.section.with-cta {
-			grid-template-areas: 'header header header cta' 'gallery gallery gallery gallery';
-		}
-
-		.section-header {
-			grid-area: header;
-			font-size: var(--text-lg);
-		}
-
-		.section-header h3 {
-			font-size: var(--text-4xl);
-		}
-
-		.with-cta .section-header {
-			justify-self: flex-start;
-			text-align: left;
-		}
-
-		.gallery {
-			grid-area: gallery;
-		}
-
-		.cta {
-			grid-area: cta;
-		}
-	}
-
-	/* ====================================================== */
-
-	.mention-card {
-		display: flex;
-		height: 7rem;
-		justify-content: center;
-		align-items: center;
-		text-align: center;
+	.tabs {
+		display: inline-flex;
+		justify-self: start;
+		gap: 0.25rem;
+		padding: 0.25rem;
 		border: 1px solid var(--gray-800);
-		border-radius: 1.5rem;
-		color: var(--gray-300);
-		background: var(--gradient-subtle);
-		box-shadow: var(--shadow-sm);
+		border-radius: 999rem;
+		background: var(--gray-999);
 	}
 
-	.result-content {
+	.tabs button {
+		border: 0;
+		background: none;
+		color: var(--gray-300);
+		font: inherit;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		padding: 0.35rem 1rem;
+		border-radius: 999rem;
+		cursor: pointer;
+	}
+
+	.tabs button[aria-selected='true'] {
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+	}
+
+	.tabs button:focus-visible {
+		outline: 2px solid var(--accent-regular);
+		outline-offset: 2px;
+	}
+
+	[role='tabpanel'][hidden] {
+		display: none;
+	}
+
+	.industry-cards,
+	.results,
+	.build-steps,
+	.places {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.industry-card {
+		gap: 1rem;
+	}
+
+	.industry-card h3 {
+		font-size: var(--text-xl);
+	}
+
+	.points {
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.35rem;
+		color: var(--gray-200);
+	}
+
+	.card-actions {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+		margin-top: auto;
+	}
+
+	.card-primary {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.55rem 1.2rem;
+		border-radius: 999rem;
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.card-primary:hover {
+		filter: brightness(1.15);
+	}
+
+	.result {
+		gap: 0.4rem;
+	}
+
+	.result-label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--gray-200);
+	}
+
+	.result-values {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: var(--font-brand);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.before {
+		font-size: var(--text-lg);
+		color: var(--gray-400);
+		text-decoration: line-through;
+		text-decoration-thickness: 1px;
+	}
+
+	.after {
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		color: var(--accent-dark);
+	}
+
+	.result-note {
+		font-size: 0.8rem;
+		color: var(--gray-400);
+	}
+
+	.build-steps .card {
 		gap: 0.5rem;
 	}
 
-	.result-metric {
-		font-size: var(--text-2xl);
-		font-weight: 700;
-		color: var(--accent-regular);
-		line-height: 1;
+	.step-link {
+		margin-top: auto;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--accent-dark);
 	}
 
-	.result-description {
-		font-size: var(--text-sm);
+	.region {
+		display: grid;
+		gap: 1.5rem;
+		align-items: center;
+		padding: 2rem;
+	}
+
+	.region h2 {
+		font-size: var(--text-2xl);
+		color: var(--gray-0);
+	}
+
+	.region p {
+		max-width: 65ch;
 		color: var(--gray-300);
-		line-height: 1.2;
+	}
+
+	.places li {
+		padding: 0.6rem 1.2rem;
+		border-radius: 999rem;
+		border: 1px solid var(--accent-regular);
+		color: var(--gray-0);
+		font-weight: 600;
+		text-align: center;
+	}
+
+	@media (min-width: 40em) {
+		.results {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.build-steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
 	}
 
 	@media (min-width: 50em) {
-		.mention-card {
-			border-radius: 1.5rem;
-			height: 9.5rem;
+		.industry-cards {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
-		.result-metric {
-			font-size: var(--text-3xl);
+		.education {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 64em) {
+		.results {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 
-		.result-description {
-			font-size: var(--text-base);
+		.build-steps {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+		}
+
+		.region {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+			padding: 3rem;
 		}
 	}
 </style>

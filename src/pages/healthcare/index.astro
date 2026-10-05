@@ -4,12 +4,10 @@ import Icon from '../../components/Icon.astro';
 import TwinPreview from '../../components/twin/TwinPreview.astro';
 import RoiCalculator from '../../components/twin/RoiCalculator.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { bookingHref } from '../../config/contact';
 import '../../styles/industry.css';
 
-const email = 'insights@lumen-analytica.io';
-const assessmentHref = `mailto:${email}?subject=${encodeURIComponent('Clinic digital twin assessment')}&body=${encodeURIComponent(
-	'Hello,\n\nWe would like to learn more about a digital twin for our clinic.\n\nName:\nOrganization:\nNumber of providers / sites:\nBiggest scheduling or wait-time challenge:\n',
-)}`;
+const assessmentHref = bookingHref('healthcare', 'landing');
 
 const problems = [
 	{
@@ -165,7 +163,7 @@ const faqs = [
 					<h2>What's a shorter day worth?</h2>
 					<p>Put in your own numbers for a rough annual estimate. The pilot replaces these assumptions with measured results.</p>
 				</header>
-				<RoiCalculator model="clinic" email={email} />
+				<RoiCalculator model="clinic" />
 			</section>
 
 			<section class="section">

@@ -45,8 +45,8 @@ export const HOME = {
 			intro: 'The same simulated day, before and after one set of changes. These are results from our demo twins, not client results.',
 			// Averages from the demo twins' own runs (20 simulated clinic days, 8 simulated dock days).
 			items: [
-				{ before: '21 min', after: '15 min', label: 'Average wait to see a provider', note: 'Clinic twin: hourly block booking → staggered template' },
-				{ before: '47 min', after: '35 min', label: '90th percentile wait', note: 'Same clinic, same patients' },
+				{ before: '25 min', after: '16 min', label: 'Average wait to see a provider', note: 'Clinic twin: hourly blocks → staggered template, half the double-booking' },
+				{ before: '51 min', after: '36 min', label: '90th percentile wait', note: 'Same clinic, same patients' },
 				{ before: '$1,790', after: '$24', label: 'Detention per day', note: 'Cross-dock twin: bridge waves → appointments, balanced priority, 8 drivers' },
 				{ before: '261', after: '42', label: 'Pallets 30+ min on the dock', note: 'Same dock, same trucks' },
 			],
@@ -122,8 +122,8 @@ export const HOME = {
 			title: 'Lo que muestran los gemelos de demostración',
 			intro: 'El mismo día simulado, antes y después de un conjunto de cambios. Son resultados de nuestros gemelos de demostración, no de clientes.',
 			items: [
-				{ before: '21 min', after: '15 min', label: 'Espera promedio para ver al médico', note: 'Gemelo de la clínica: bloques por hora → agenda escalonada' },
-				{ before: '47 min', after: '35 min', label: 'Espera del percentil 90', note: 'La misma clínica, los mismos pacientes' },
+				{ before: '25 min', after: '16 min', label: 'Espera promedio para ver al médico', note: 'Gemelo de la clínica: bloques por hora → agenda escalonada, la mitad de citas dobles' },
+				{ before: '51 min', after: '36 min', label: 'Espera del percentil 90', note: 'La misma clínica, los mismos pacientes' },
 				{ before: '$1,790', after: '$24', label: 'Cargos por demora por día', note: 'Gemelo del cross-dock: olas del puente → citas, prioridad equilibrada, 8 montacarguistas' },
 				{ before: '261', after: '42', label: 'Tarimas 30+ min en el andén', note: 'El mismo andén, los mismos camiones' },
 			],

@@ -18,7 +18,7 @@ export const DEMOS: Record<'healthcare' | 'cold-chain', Record<Lang, DemoContent
 			},
 			title: 'A day in your clinic, before it happens',
 			tagline:
-				'This is a digital twin of a typical four-provider primary care clinic. Patients check in, wait, get roomed and see their provider. Change the schedule or staffing and the same day replays, so you see exactly what your change would do.',
+				'This is a digital twin of a four-provider community clinic: lots of no-shows, double-booking to make up for them, and a steady stream of walk-ins. Patients check in, wait, get roomed and see their provider. Change the schedule or staffing and the same day replays, so you see exactly what your change would do.',
 			disclaimer:
 				'All patients and providers are synthetic. Arrival patterns, visit lengths and no-shows are drawn from realistic distributions; a twin of your clinic is calibrated to your own scheduling and visit data.',
 			cta: 'Want this for your clinic?',
@@ -31,7 +31,7 @@ export const DEMOS: Record<'healthcare' | 'cold-chain', Record<Lang, DemoContent
 			},
 			title: 'Un día en su clínica, antes de que suceda',
 			tagline:
-				'Este es el gemelo digital de una clínica típica de atención primaria con cuatro médicos. Los pacientes se registran, esperan, pasan al consultorio y ven a su médico. Cambie la agenda o el personal y el mismo día se repite, para que vea exactamente qué haría su cambio.',
+				'Este es el gemelo digital de una clínica comunitaria con cuatro médicos: muchas inasistencias, citas dobles para compensarlas y un flujo constante de pacientes sin cita. Los pacientes se registran, esperan, pasan al consultorio y ven a su médico. Cambie la agenda o el personal y el mismo día se repite, para que vea exactamente qué haría su cambio.',
 			disclaimer:
 				'Todos los pacientes y médicos son ficticios. Los patrones de llegada, la duración de las consultas y las inasistencias siguen distribuciones realistas; el gemelo de su clínica se calibra con sus propios datos de agenda y consultas.',
 			cta: '¿Quiere esto para su clínica?',

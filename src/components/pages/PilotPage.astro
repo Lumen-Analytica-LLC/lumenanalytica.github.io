@@ -1,0 +1,226 @@
+---
+import { bookingHref, CONTACT, contactHref } from '../../config/contact';
+import { langFromPath, localizePath, UI } from '../../i18n';
+import { PILOT } from '../../i18n/pilot';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/industry.css';
+import CallToAction from '../CallToAction.astro';
+import Icon from '../Icon.astro';
+
+const lang = langFromPath(Astro.url.pathname);
+const c = PILOT[lang];
+const cta = UI[lang].cta;
+const book = bookingHref(undefined, 'pilot', lang);
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper page-hero stack gap-8">
+			<p class="eyebrow">{c.eyebrow}</p>
+			<h1>{c.h1}</h1>
+			<p class="lede">{c.lede}</p>
+			<div class="actions">
+				<CallToAction href={book}>
+					{CONTACT.bookingUrl ? cta.book : c.cta}
+					<Icon icon="arrow-right" size="1.2em" />
+				</CallToAction>
+				{CONTACT.bookingUrl && <a class="secondary" href={contactHref(undefined, 'pilot', lang)}>{cta.message}</a>}
+			</div>
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.fit.title}</h2>
+					<p>{c.fit.intro}</p>
+				</header>
+				<ul class="checklist">
+					{
+						c.fit.items.map((item) => (
+							<li class="card">
+								<span class="check" aria-hidden="true">✓</span>
+								<p>{item}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.weeks.title}</h2>
+					<p>{c.weeks.intro}</p>
+				</header>
+				<ol class="timeline">
+					{
+						c.weeks.items.map((item) => (
+							<li class="card">
+								<span class="week">{item.week}</span>
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.deliverables.title}</h2>
+				</header>
+				<ul class="deliverables">
+					{
+						c.deliverables.items.map((item) => (
+							<li class="card">
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="two-up">
+				<div class="card">
+					<h2>{c.needs.title}</h2>
+					<ul class="bullets">
+						{c.needs.items.map((item) => <li>{item}</li>)}
+					</ul>
+				</div>
+				<div class="card">
+					<h2>{c.after.title}</h2>
+					<p>{c.after.body}</p>
+					<ul class="bullets">
+						{c.after.items.map((item) => <li>{item}</li>)}
+					</ul>
+				</div>
+			</section>
+
+			<section class="card pricing">
+				<h2>{c.pricing.title}</h2>
+				<p>{c.pricing.body}</p>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.faqs.title}</h2>
+				</header>
+				<div class="faqs">
+					{
+						c.faqs.items.map((faq) => (
+							<details>
+								<summary>{faq.q}</summary>
+								<p>{faq.a}</p>
+							</details>
+						))
+					}
+				</div>
+			</section>
+		</main>
+
+		<aside class="closing">
+			<h2>{c.closing.title}</h2>
+			<p>{c.closing.body}</p>
+			<div class="actions">
+				<CallToAction href={book}>
+					{CONTACT.bookingUrl ? cta.book : c.cta}
+					<Icon icon="paper-plane-tilt" size="1.2em" />
+				</CallToAction>
+			</div>
+			<p class="examples">
+				{c.closing.examples}
+				<a href={localizePath('/healthcare/demo/', lang)}>{c.closing.clinic}</a> ·
+				<a href={localizePath('/cold-chain/demo/', lang)}>{c.closing.cold}</a>
+			</p>
+		</aside>
+	</div>
+</BaseLayout>
+
+<style>
+	.page-hero {
+		padding-top: 1rem;
+	}
+
+	.checklist,
+	.deliverables,
+	.bullets {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.checklist .card {
+		display: flex;
+		gap: 0.9rem;
+		align-items: flex-start;
+	}
+
+	.check {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 1.75rem;
+		height: 1.75rem;
+		border-radius: 50%;
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font-weight: 700;
+	}
+
+	.checklist p {
+		color: var(--gray-100);
+	}
+
+	.two-up {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.two-up h2,
+	.pricing h2 {
+		font-size: var(--text-xl);
+		color: var(--gray-0);
+	}
+
+	.two-up p,
+	.pricing p {
+		color: var(--gray-300);
+	}
+
+	.bullets {
+		gap: 0.5rem;
+		padding-left: 1.2rem;
+		list-style: disc;
+		color: var(--gray-200);
+	}
+
+	.pricing {
+		gap: 0.6rem;
+		max-width: 50rem;
+	}
+
+	.examples {
+		font-size: var(--text-sm);
+	}
+
+	.examples a {
+		color: var(--accent-dark);
+		font-weight: 600;
+	}
+
+	@media (min-width: 40em) {
+		.checklist,
+		.deliverables,
+		.two-up {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 64em) {
+		.deliverables {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+		}
+	}
+</style>

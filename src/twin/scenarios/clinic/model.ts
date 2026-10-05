@@ -38,14 +38,18 @@ export interface ClinicConfig {
 	disruption: boolean;
 }
 
+/**
+ * A four-provider community clinic: high no-shows, double-booking to make up for them,
+ * and steady walk-in demand. Illustrative values, not measured from a specific clinic.
+ */
 export const DEFAULT_CONFIG: ClinicConfig = {
 	seed: 1004,
 	providers: 4,
 	rooms: 7,
 	template: 'block',
-	doubleBookPct: 10,
-	noShowPct: 12,
-	walkInsPerHour: 1.5,
+	doubleBookPct: 20,
+	noShowPct: 20,
+	walkInsPerHour: 2.5,
 	disruption: false,
 };
 

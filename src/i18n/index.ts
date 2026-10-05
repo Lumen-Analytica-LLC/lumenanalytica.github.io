@@ -3,7 +3,7 @@ export type Lang = 'en' | 'es';
 export const LANGS: Lang[] = ['en', 'es'];
 
 /** Pages that exist in Spanish under /es/. Everything else falls back to English. */
-const TRANSLATED = ['/', '/healthcare/', '/healthcare/demo/', '/cold-chain/', '/cold-chain/demo/', '/contact/'];
+const TRANSLATED = ['/', '/healthcare/', '/healthcare/demo/', '/cold-chain/', '/cold-chain/demo/', '/contact/', '/approach/', '/pilot/'];
 
 /** Spanish pages live under /es/; English is unprefixed. */
 export function langFromPath(pathname: string): Lang {
@@ -37,7 +37,7 @@ export function alternateFor(pathname: string, lang: Lang): string {
 /** Interface text shared across pages. */
 export const UI = {
 	en: {
-		nav: { home: 'Home', healthcare: 'Healthcare', coldChain: 'Cold Chain', services: 'Services', about: 'About' },
+		nav: { home: 'Home', healthcare: 'Healthcare', coldChain: 'Cold Chain', approach: 'Approach', about: 'About' },
 		switchTo: 'Español',
 		switchLabel: 'Ver esta página en español',
 		cta: {
@@ -56,9 +56,10 @@ export const UI = {
 			assumed: 'Assumed improvement',
 		},
 		preview: { open: 'Open the full twin →' },
+		pilotDetails: 'Full pilot details',
 	},
 	es: {
-		nav: { home: 'Inicio', healthcare: 'Salud', coldChain: 'Cadena de frío', services: 'Servicios', about: 'Nosotros' },
+		nav: { home: 'Inicio', healthcare: 'Salud', coldChain: 'Cadena de frío', approach: 'Enfoque', about: 'Nosotros' },
 		switchTo: 'English',
 		switchLabel: 'View this page in English',
 		cta: {
@@ -77,5 +78,6 @@ export const UI = {
 			assumed: 'Mejora supuesta',
 		},
 		preview: { open: 'Abrir el gemelo completo →' },
+		pilotDetails: 'Todos los detalles del piloto',
 	},
 } satisfies Record<Lang, unknown>;

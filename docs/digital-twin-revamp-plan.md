@@ -147,7 +147,8 @@ The clinic simulation is cheap enough to run on the main thread. A Web Worker co
 3. **Cold storage cross-dock twin** _(done)_ at `/cold-chain/demo`, plus the `/cold-chain` landing page with a detention and spoilage ROI calculator.
 4. **Regional repositioning:**
    - _Done:_ regional homepage; contact form (Formspree) and Cal.com booking replacing email links, with ROI numbers and demo scenarios attached to inquiries; Spanish versions under `/es/` (home, both landing pages, both demos, contact) with a language switch and hreflang tags. Page text lives in `src/i18n/`.
-   - _Next:_ native-speaker review of the Spanish copy, retune clinic defaults (no-shows, walk-ins) to regional clinics, `/approach` page absorbing the current services, `/pilot` page. Services and About remain English-only for now.
+   - _Done:_ clinic demo defaults retuned to a community clinic profile (20% no-shows, 20% double-booking, 2.5 walk-ins/hour; illustrative, not measured); `/approach` page (five stages, engagement options, existing services as foundations) replacing Services in the nav; `/pilot` page. Both in English and Spanish.
+   - _Next:_ native-speaker review of the Spanish copy; confirm pilot and engagement claims; Services and About remain English-only.
 5. **Side-by-side scenario comparison** (Web Worker, many replications).
 6. **Education:** student services twin (registration, financial aid and advising lines) once a university partner is in place.
 7. **Polish:** click-to-inspect, accessible table view, mobile tuning, explainers that open the demo with settings applied, optional "bring your own schedule" CSV import (processed in the browser only).

@@ -1,0 +1,208 @@
+---
+import { bookingHref, CONTACT } from '../../config/contact';
+import { langFromPath, localizePath, UI } from '../../i18n';
+import { APPROACH } from '../../i18n/approach';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/industry.css';
+import CallToAction from '../CallToAction.astro';
+import Icon from '../Icon.astro';
+
+const lang = langFromPath(Astro.url.pathname);
+const c = APPROACH[lang];
+const cta = UI[lang].cta;
+const pilotHref = localizePath('/pilot/', lang);
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper page-hero stack gap-8">
+			<p class="eyebrow">{c.eyebrow}</p>
+			<h1>{c.h1}</h1>
+			<p class="lede">{c.lede}</p>
+			<div class="actions">
+				<CallToAction href={bookingHref(undefined, 'approach', lang)}>
+					{CONTACT.bookingUrl ? cta.book : cta.talk}
+					<Icon icon="arrow-right" size="1.2em" />
+				</CallToAction>
+				<a class="secondary" href={pilotHref}>{c.closing.pilot}</a>
+			</div>
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.stagesTitle}</h2>
+					<p>{c.stagesIntro}</p>
+				</header>
+				<ol class="stages">
+					{
+						c.stages.map((stage, i) => (
+							<li class="card stage">
+								<div class="stage-head">
+									<span class="step-number">{i + 1}</span>
+									<div>
+										<h3>{stage.title}</h3>
+										<p>{stage.summary}</p>
+									</div>
+								</div>
+								<div class="stage-body">
+									<div>
+										<p class="label">{c.weDoLabel}</p>
+										<ul>
+											{stage.weDo.map((item) => <li>{item}</li>)}
+										</ul>
+									</div>
+									<div>
+										<p class="label">{c.youGetLabel}</p>
+										<p>{stage.youGet}</p>
+										<a class="service-link" href={`/services/${stage.service.slug}/`}>
+											{stage.service.label} <Icon icon="arrow-right" size="0.9em" />
+										</a>
+									</div>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.engagements.title}</h2>
+					<p>{c.engagements.intro}</p>
+				</header>
+				<ul class="cards cards-3">
+					{
+						c.engagements.items.map((item) => (
+							<li class="card">
+								<h3>{item.name}</h3>
+								<p>{item.body}</p>
+								{item.cta && (
+									<a class="service-link" href={localizePath(item.cta.href, lang)}>
+										{item.cta.label} <Icon icon="arrow-right" size="0.9em" />
+									</a>
+								)}
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.foundations.title}</h2>
+					<p>{c.foundations.intro}</p>
+				</header>
+				<ul class="foundations">
+					{
+						c.foundations.items.map((item) => (
+							<li class="card">
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+								<a class="service-link" href={`/services/${item.slug}/`}>
+									{c.foundations.more} <Icon icon="arrow-right" size="0.9em" />
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+
+		<aside class="closing">
+			<h2>{c.closing.title}</h2>
+			<p>{c.closing.body}</p>
+			<div class="actions">
+				<CallToAction href={bookingHref(undefined, 'approach', lang)}>
+					{CONTACT.bookingUrl ? cta.book : cta.talk}
+					<Icon icon="paper-plane-tilt" size="1.2em" />
+				</CallToAction>
+				<a class="secondary" href={pilotHref}>{c.closing.pilot}</a>
+			</div>
+		</aside>
+	</div>
+</BaseLayout>
+
+<style>
+	.page-hero {
+		padding-top: 1rem;
+	}
+
+	.stages,
+	.foundations {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.stage {
+		gap: 1.25rem;
+	}
+
+	.stage-head {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+
+	.stage-head .step-number {
+		flex: none;
+	}
+
+	.stage-head h3 {
+		font-size: var(--text-xl);
+		color: var(--gray-0);
+	}
+
+	.stage-body {
+		display: grid;
+		gap: 1.25rem;
+	}
+
+	.stage-body ul {
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.35rem;
+		color: var(--gray-200);
+	}
+
+	.label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--accent-dark);
+		margin-bottom: 0.4rem;
+	}
+
+	.service-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		margin-top: 0.75rem;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--accent-dark);
+	}
+
+	@media (min-width: 40em) {
+		.foundations {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 50em) {
+		.stage-body {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			padding-left: 3.25rem;
+		}
+	}
+
+	@media (min-width: 64em) {
+		.foundations {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+		}
+	}
+</style>

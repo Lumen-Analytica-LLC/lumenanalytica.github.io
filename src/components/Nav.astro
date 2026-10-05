@@ -14,7 +14,7 @@ const textLinks: { label: string; href: string }[] = [
 	{ label: t.nav.home, href: localizePath('/', lang) },
 	{ label: t.nav.healthcare, href: localizePath('/healthcare/', lang) },
 	{ label: t.nav.coldChain, href: localizePath('/cold-chain/', lang) },
-	{ label: t.nav.services, href: localizePath('/services/', lang) },
+	{ label: t.nav.approach, href: localizePath('/approach/', lang) },
 	{ label: t.nav.about, href: localizePath('/about/', lang) },
 ];
 const homeHrefs = ['/', '/es/'];
@@ -31,6 +31,8 @@ const isCurrentPage = (href: string) => {
 	let pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 	if (pathname.at(0) !== '/') pathname = '/' + pathname;
 	if (pathname.at(-1) !== '/') pathname += '/';
+	// Service pages sit under Approach, which replaced the old Services menu item.
+	if (href.endsWith('/approach/') && pathname.startsWith('/services/')) return true;
 	return pathname === href || (!homeHrefs.includes(href) && pathname.startsWith(href));
 };
 ---

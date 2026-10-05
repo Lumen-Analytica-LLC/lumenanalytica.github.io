@@ -1,6 +1,6 @@
 ---
 import { bookingHref } from '../../config/contact';
-import { langFromPath, localizePath } from '../../i18n';
+import { langFromPath, localizePath, UI } from '../../i18n';
 import type { LandingContent } from '../../i18n/landing';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import '../../styles/industry.css';
@@ -119,6 +119,9 @@ const roiModel = industry === 'healthcare' ? 'clinic' : 'cold-chain';
 						))
 					}
 				</ol>
+				<a class="pilot-link" href={localizePath('/pilot/', lang)}>
+					{UI[lang].pilotDetails} <Icon icon="arrow-right" size="1em" />
+				</a>
 			</section>
 
 			<section class="section">

@@ -1,3 +1,5 @@
+import type { Industry } from '../config/contact';
+
 /** ROI calculator models for the industry landing pages. Runs in the page; nothing is sent anywhere. */
 
 export interface RoiInput {
@@ -22,8 +24,10 @@ export interface RoiModel {
 	outputs: RoiOutput[];
 	/** Who the improvement assumption is measured for, e.g. "your clinic". */
 	subject: string;
-	emailSubject: string;
-	emailIntro: string;
+	/** Industry pre-selected on the contact form. */
+	industry: Industry;
+	/** First line of the summary attached to the inquiry. */
+	summaryTitle: string;
 	/** `improvement` is a fraction (0.25 = 25%). Must return every output key plus `total`. */
 	compute: (n: (name: string) => number, improvement: number) => Record<string, number>;
 }
@@ -31,8 +35,8 @@ export interface RoiModel {
 export const ROI_MODELS = {
 	clinic: {
 		subject: 'your clinic',
-		emailSubject: 'Clinic digital twin pilot',
-		emailIntro: 'I ran your clinic ROI estimate and would like to talk about a digital twin pilot.',
+		industry: 'healthcare',
+		summaryTitle: 'Clinic ROI estimate',
 		inputs: [
 			{ name: 'lostPerDay', label: 'Patients lost per day', hint: 'Walk-ins who leave, plus visits you turn away when the day runs long', value: 3, min: 0, max: 50, step: 0.5 },
 			{ name: 'revenuePerVisit', label: 'Revenue per visit', prefix: '$', value: 145, min: 0, max: 2000, step: 5 },
@@ -56,8 +60,8 @@ export const ROI_MODELS = {
 	},
 	'cold-chain': {
 		subject: 'your dock',
-		emailSubject: 'Cold chain digital twin pilot',
-		emailIntro: 'I ran your cold chain ROI estimate and would like to talk about a digital twin pilot.',
+		industry: 'cold-chain',
+		summaryTitle: 'Cold chain ROI estimate',
 		inputs: [
 			{ name: 'trucksPerDay', label: 'Inbound and outbound trucks per day', value: 60, min: 0, max: 1000, step: 1 },
 			{ name: 'detentionShare', label: 'Trucks that run into detention (%)', value: 20, min: 0, max: 100, step: 1 },

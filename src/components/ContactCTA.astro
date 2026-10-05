@@ -1,15 +1,55 @@
 ---
+import { bookingHref, CONTACT, contactHref, type Industry } from '../config/contact';
 import CallToAction from './CallToAction.astro';
 import Icon from './Icon.astro';
+
+interface Props {
+	/** Pre-selects the industry on the contact form. */
+	industry?: Industry;
+	/** Attach the demo scenario the visitor is looking at (its current URL) to their message. */
+	captureScenario?: boolean;
+	title?: string;
+}
+
+const { industry, captureScenario = false, title = 'Want a twin of your operation?' } = Astro.props;
+const from = captureScenario ? 'demo' : undefined;
 ---
 
-<aside>
-	<h2>Interested in working together?</h2>
-	<CallToAction href="mailto:insights@lumen-analytica.io?subject=Service%20Inquiry&body=Hello%2C%0A%0AI%20am%20interested%20in%20learning%20more%20about%20your%20services.%0A%0AName%3A%20%0ACompany%3A%20%0AService%20Interest%3A%20%0A%0AMessage%3A%0A">
-		Send Us a Message
-		<Icon icon="paper-plane-tilt" size="1.2em" />
-	</CallToAction>
+<aside data-contact-cta={captureScenario ? industry ?? 'other' : undefined}>
+	<h2>{title}</h2>
+	<div class="actions">
+		<CallToAction href={bookingHref(industry, from)}>
+			{CONTACT.bookingUrl ? 'Book a 20-minute call' : 'Talk to us'}
+			<Icon icon="arrow-right" size="1.2em" />
+		</CallToAction>
+		{
+			CONTACT.bookingUrl && (
+				<a class="secondary" href={contactHref(industry, from)}>
+					Or send a message
+				</a>
+			)
+		}
+	</div>
 </aside>
+
+<script>
+	import { HANDOFF_KEY, type Industry } from '../config/contact';
+
+	// On demo pages, carry the scenario the visitor set up through to the contact form.
+	for (const cta of document.querySelectorAll<HTMLElement>('[data-contact-cta]')) {
+		cta.addEventListener('click', (event) => {
+			if (!(event.target as Element).closest('a[href^="/contact/"]')) return;
+			try {
+				sessionStorage.setItem(
+					HANDOFF_KEY,
+					JSON.stringify({ industry: cta.dataset.contactCta as Industry, scenario: location.href }),
+				);
+			} catch {
+				// Storage unavailable: the form still works, just without the scenario attached.
+			}
+		});
+	}
+</script>
 
 <style>
 	aside {
@@ -27,7 +67,23 @@ import Icon from './Icon.astro';
 	h2 {
 		font-size: var(--text-xl);
 		text-align: center;
-		max-width: 15ch;
+		max-width: 18ch;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem 1.5rem;
+	}
+
+	.secondary {
+		font-weight: 600;
+		color: var(--gray-100);
+		text-decoration: underline;
+		text-underline-offset: 0.25em;
+		text-decoration-color: var(--accent-regular);
 	}
 
 	@media (min-width: 50em) {

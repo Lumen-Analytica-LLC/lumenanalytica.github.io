@@ -1,18 +1,17 @@
 ---
+import { contactHref } from '../../config/contact';
 import { ROI_MODELS, type RoiModelName } from '../../twin/roi';
 
 interface Props {
 	/** Which industry's ROI model to show. */
 	model: RoiModelName;
-	/** Inquiry address the "email these numbers" button writes to. */
-	email: string;
 }
 
-const { model, email } = Astro.props;
-const { inputs, outputs, subject } = ROI_MODELS[model];
+const { model } = Astro.props;
+const { inputs, outputs, subject, industry } = ROI_MODELS[model];
 ---
 
-<form class="roi" data-roi={model} data-email={email}>
+<form class="roi" data-roi={model}>
 	<div class="inputs">
 		{
 			inputs.map((input) => (
@@ -58,12 +57,13 @@ const { inputs, outputs, subject } = ROI_MODELS[model];
 				))
 			}
 		</dl>
-		<a class="send" data-send href={`mailto:${email}`}>Email these numbers to us →</a>
-		<p class="fine">Estimates use only the numbers you enter. Nothing is stored or sent until you choose to email us.</p>
+		<a class="send" data-send href={contactHref(industry, 'roi')}>Send these numbers with your inquiry →</a>
+		<p class="fine">Estimates use only the numbers you enter. Nothing is sent until you submit the contact form.</p>
 	</div>
 </form>
 
 <script>
+	import { HANDOFF_KEY } from '../../config/contact';
 	import { ROI_MODELS, type RoiModel, type RoiModelName } from '../../twin/roi';
 
 	const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -74,6 +74,17 @@ const { inputs, outputs, subject } = ROI_MODELS[model];
 		const out = (name: string) => form.querySelector<HTMLElement>(`[data-out="${name}"]`)!;
 		const send = form.querySelector<HTMLAnchorElement>('[data-send]')!;
 		const improvementOut = form.querySelector<HTMLOutputElement>('[data-improvement-out]')!;
+
+		let summary = '';
+
+		// Carry the estimate to the contact form, where the visitor can see or remove it.
+		send.addEventListener('click', () => {
+			try {
+				sessionStorage.setItem(HANDOFF_KEY, JSON.stringify({ industry: model.industry, summary }));
+			} catch {
+				// Storage unavailable: the form still works, just without the numbers attached.
+			}
+		});
 
 		const update = () => {
 			const data = new FormData(form);
@@ -87,19 +98,11 @@ const { inputs, outputs, subject } = ROI_MODELS[model];
 			}
 			out('total').textContent = money.format(results.total);
 
-			const body = [
-				'Hello,',
-				'',
-				model.emailIntro,
-				'',
+			summary = [
+				`${model.summaryTitle}: ${money.format(results.total)} a year`,
 				...model.inputs.map((input) => `${input.label}: ${input.prefix ?? ''}${n(input.name)}`),
 				`Assumed improvement: ${Math.round(improvement * 100)}%`,
-				`Estimated annual impact: ${money.format(results.total)}`,
-				'',
-				'Name:',
-				'Organization:',
 			].join('\n');
-			send.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(model.emailSubject)}&body=${encodeURIComponent(body)}`;
 		};
 
 		form.addEventListener('input', update);

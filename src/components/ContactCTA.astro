@@ -1,5 +1,6 @@
 ---
 import { bookingHref, CONTACT, contactHref, type Industry } from '../config/contact';
+import { langFromPath, UI } from '../i18n';
 import CallToAction from './CallToAction.astro';
 import Icon from './Icon.astro';
 
@@ -11,21 +12,23 @@ interface Props {
 	title?: string;
 }
 
-const { industry, captureScenario = false, title = 'Want a twin of your operation?' } = Astro.props;
+const lang = langFromPath(Astro.url.pathname);
+const t = UI[lang].cta;
+const { industry, captureScenario = false, title = t.title } = Astro.props;
 const from = captureScenario ? 'demo' : undefined;
 ---
 
 <aside data-contact-cta={captureScenario ? industry ?? 'other' : undefined}>
 	<h2>{title}</h2>
 	<div class="actions">
-		<CallToAction href={bookingHref(industry, from)}>
-			{CONTACT.bookingUrl ? 'Book a 20-minute call' : 'Talk to us'}
+		<CallToAction href={bookingHref(industry, from, lang)}>
+			{CONTACT.bookingUrl ? t.book : t.talk}
 			<Icon icon="arrow-right" size="1.2em" />
 		</CallToAction>
 		{
 			CONTACT.bookingUrl && (
-				<a class="secondary" href={contactHref(industry, from)}>
-					Or send a message
+				<a class="secondary" href={contactHref(industry, from, lang)}>
+					{t.message}
 				</a>
 			)
 		}
@@ -38,7 +41,7 @@ const from = captureScenario ? 'demo' : undefined;
 	// On demo pages, carry the scenario the visitor set up through to the contact form.
 	for (const cta of document.querySelectorAll<HTMLElement>('[data-contact-cta]')) {
 		cta.addEventListener('click', (event) => {
-			if (!(event.target as Element).closest('a[href^="/contact/"]')) return;
+			if (!(event.target as Element).closest('a[href*="/contact/"]')) return;
 			try {
 				sessionStorage.setItem(
 					HANDOFF_KEY,

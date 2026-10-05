@@ -48,21 +48,23 @@ const SURGE_FACTOR = 1.4;
 export const FORKLIFTS_DOWN_WINDOW: [number, number] = [9 * 60, 12 * 60];
 const FORKLIFTS_DOWN = 2;
 
+export type CommodityId = 'berries' | 'leafy-greens' | 'broccoli' | 'avocados' | 'tomatoes' | 'peppers' | 'limes';
+
 export interface Commodity {
-	name: string;
+	id: CommodityId;
 	zone: StorageZone;
 	precoolMinutes: number | null;
 	share: number;
 }
 
 export const COMMODITIES: Commodity[] = [
-	{ name: 'Berries', zone: 'cooler', precoolMinutes: 90, share: 0.16 },
-	{ name: 'Leafy greens', zone: 'cooler', precoolMinutes: 75, share: 0.14 },
-	{ name: 'Broccoli', zone: 'cooler', precoolMinutes: 80, share: 0.1 },
-	{ name: 'Avocados', zone: 'mild', precoolMinutes: null, share: 0.18 },
-	{ name: 'Tomatoes', zone: 'mild', precoolMinutes: null, share: 0.18 },
-	{ name: 'Peppers', zone: 'mild', precoolMinutes: null, share: 0.12 },
-	{ name: 'Limes', zone: 'mild', precoolMinutes: null, share: 0.12 },
+	{ id: 'berries', zone: 'cooler', precoolMinutes: 90, share: 0.16 },
+	{ id: 'leafy-greens', zone: 'cooler', precoolMinutes: 75, share: 0.14 },
+	{ id: 'broccoli', zone: 'cooler', precoolMinutes: 80, share: 0.1 },
+	{ id: 'avocados', zone: 'mild', precoolMinutes: null, share: 0.18 },
+	{ id: 'tomatoes', zone: 'mild', precoolMinutes: null, share: 0.18 },
+	{ id: 'peppers', zone: 'mild', precoolMinutes: null, share: 0.12 },
+	{ id: 'limes', zone: 'mild', precoolMinutes: null, share: 0.12 },
 ];
 
 export type ArrivalPattern = 'waves' | 'appointments';
@@ -166,9 +168,23 @@ export interface Forklift {
 	downSince: number | null;
 }
 
+export type HoldingArea = 'precool' | 'hold' | StorageZone;
+
+/** Something worth telling the viewer. Worded per language by the page, not here. */
+export type ColdStorageEvent =
+	| { kind: 'open' }
+	| { kind: 'detention'; truck: number; door: string | null }
+	| { kind: 'inspection-flagged'; truck: number; commodity: CommodityId }
+	| { kind: 'inspection-released'; truck: number; commodity: CommodityId }
+	| { kind: 'warm-pallets'; truck: number; commodity: CommodityId }
+	| { kind: 'area-full'; area: HoldingArea }
+	| { kind: 'forklifts-down'; count: number }
+	| { kind: 'forklifts-back' }
+	| { kind: 'day-complete' };
+
 export interface LogEntry {
 	time: number;
-	text: string;
+	event: ColdStorageEvent;
 	tone: 'info' | 'warn' | 'bad' | 'good';
 }
 
@@ -253,7 +269,7 @@ export class ColdStorageSim {
 			this.sim.at(start, () => this.forkliftsDown(true));
 			this.sim.at(end, () => this.forkliftsDown(false));
 		}
-		this.note(OPEN, 'Dock opens. Forklift drivers on shift.', 'info');
+		this.note(OPEN, { kind: 'open' }, 'info');
 	}
 
 	get now(): number {
@@ -376,10 +392,12 @@ export class ColdStorageSim {
 		this.yard.push(truck.id);
 		this.sim.after(FREE_TIME, () => {
 			if (truck.phase === 'gone') return;
-			const where = truck.phase === 'yard' ? 'still waiting in the yard' : `at door ${doorLabel(truck)}`;
-			this.note(this.now, `Truck ${truck.id + 1} passes 2 h free time ${where}. Detention starts`, 'bad');
+			const door = truck.phase === 'yard' ? null : doorLabel(truck);
+			this.note(this.now, { kind: 'detention', truck: truck.id + 1, door }, 'bad');
 		});
-		if (truck.inspect) this.note(this.now, `Truck ${truck.id + 1} (${truck.commodity!.name}) flagged for inspection`, 'warn');
+		if (truck.inspect) {
+			this.note(this.now, { kind: 'inspection-flagged', truck: truck.id + 1, commodity: truck.commodity!.id }, 'warn');
+		}
 		this.dispatch();
 	}
 
@@ -412,7 +430,7 @@ export class ColdStorageSim {
 			this.lastActivity = Math.max(this.lastActivity, this.now);
 			const doors = truck.kind === 'inbound' ? this.inboundDoors : this.outboundDoors;
 			doors[truck.door!] = null;
-			if (this.dayComplete()) this.note(this.now, 'Last truck out. Day complete', 'good');
+			if (this.dayComplete()) this.note(this.now, { kind: 'day-complete' }, 'good');
 			this.dispatch();
 		});
 	}
@@ -608,7 +626,7 @@ export class ColdStorageSim {
 			this.sim.after(EXCURSION_MINUTES, () => {
 				if (pallet.state !== 'staged' || pallet.tStaged !== stagedAt || truck.warned.warm) return;
 				truck.warned.warm = true;
-				this.note(this.now, `${pallet.commodity.name} from truck ${truck.id + 1} sitting 30+ min on the dock`, 'warn');
+				this.note(this.now, { kind: 'warm-pallets', truck: truck.id + 1, commodity: pallet.commodity.id }, 'warn');
 			});
 			truck.moved++;
 			if (truck.moved === truck.pallets) this.finishTruck(truck);
@@ -694,11 +712,10 @@ export class ColdStorageSim {
 		return null;
 	}
 
-	private full(area: 'precool' | 'hold' | StorageZone): null {
+	private full(area: HoldingArea): null {
 		if (!this.warnedFull[area]) {
 			this.warnedFull[area] = true;
-			const names = { precool: 'Pre-cool tunnel', hold: 'Inspection hold', cooler: 'Cooler', mild: 'Mild room' };
-			this.note(this.now, `${names[area]} is full. Pallets are backing up on the dock`, 'bad');
+			this.note(this.now, { kind: 'area-full', area }, 'bad');
 		}
 		return null;
 	}
@@ -740,11 +757,7 @@ export class ColdStorageSim {
 				forklift.legs = [];
 			}
 		}
-		this.note(
-			this.now,
-			down ? `${affected.length} forklifts out of service (battery and maintenance)` : 'Forklifts back in service',
-			down ? 'warn' : 'info',
-		);
+		this.note(this.now, down ? { kind: 'forklifts-down', count: affected.length } : { kind: 'forklifts-back' }, down ? 'warn' : 'info');
 		this.dispatch();
 	}
 
@@ -758,7 +771,7 @@ export class ColdStorageSim {
 			this.sim.after(minutes, () => {
 				this.inspectorsBusy--;
 				truck.inspected = true;
-				this.note(this.now, `Truck ${truck.id + 1} (${truck.commodity!.name}) released from inspection`, 'info');
+				this.note(this.now, { kind: 'inspection-released', truck: truck.id + 1, commodity: truck.commodity!.id }, 'info');
 				this.dispatch();
 			});
 		}
@@ -766,8 +779,8 @@ export class ColdStorageSim {
 
 	// ---------------------------------------------------------------- warnings and metrics
 
-	private note(time: number, text: string, tone: LogEntry['tone']): void {
-		this.log.push({ time, text, tone });
+	private note(time: number, event: ColdStorageEvent, tone: LogEntry['tone']): void {
+		this.log.push({ time, event, tone });
 	}
 
 	dayComplete(): boolean {

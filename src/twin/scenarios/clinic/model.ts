@@ -20,10 +20,11 @@ export const CHECKIN_CLERKS = 2;
 
 export type Template = 'staggered' | 'modified-wave' | 'block';
 
-export const TEMPLATES: Record<Template, { label: string; offsets: number[] }> = {
-	staggered: { label: 'Staggered', offsets: [0, 20, 40] },
-	'modified-wave': { label: 'Modified wave', offsets: [0, 0, 30] },
-	block: { label: 'Hourly block', offsets: [0, 0, 0] },
+/** Appointment minutes past each hour, three slots per provider per hour. */
+export const TEMPLATES: Record<Template, { offsets: number[] }> = {
+	staggered: { offsets: [0, 20, 40] },
+	'modified-wave': { offsets: [0, 0, 30] },
+	block: { offsets: [0, 0, 0] },
 };
 
 export interface ClinicConfig {
@@ -129,9 +130,18 @@ export interface Assistant {
 	room: number | null;
 }
 
+/** Something worth telling the viewer. Worded per language by the page, not here. */
+export type ClinicEvent =
+	| { kind: 'open' }
+	| { kind: 'left-without-being-seen'; minutes: number }
+	| { kind: 'provider-away'; name: string }
+	| { kind: 'provider-back'; name: string; waiting: number }
+	| { kind: 'long-wait'; name: string; minutes: number }
+	| { kind: 'day-complete' };
+
 export interface LogEntry {
 	time: number;
-	text: string;
+	event: ClinicEvent;
 	tone: 'info' | 'warn' | 'bad' | 'good';
 }
 
@@ -189,7 +199,7 @@ export class ClinicSim {
 			this.sim.at(start, () => this.startAway(this.providers[0]));
 			this.sim.at(end, () => this.endAway(this.providers[0]));
 		}
-		this.note(OPEN, 'Doors open. Front desk staffed.', 'info');
+		this.note(OPEN, { kind: 'open' }, 'info');
 	}
 
 	get now(): number {
@@ -290,13 +300,13 @@ export class ClinicSim {
 		p.phase = 'gone';
 		p.leftWithoutBeingSeen = true;
 		p.tDone = this.now;
-		this.note(this.now, `Walk-in left without being seen after ${Math.round(this.now - p.tArrived!)} min`, 'bad');
+		this.note(this.now, { kind: 'left-without-being-seen', minutes: Math.round(this.now - p.tArrived!) }, 'bad');
 		this.dispatch();
 	}
 
 	private startAway(provider: Provider): void {
 		provider.awayRequested = true;
-		this.note(this.now, `${provider.name} pulled away for an urgent matter`, 'warn');
+		this.note(this.now, { kind: 'provider-away', name: provider.name }, 'warn');
 		if (provider.status === 'idle') this.setStatus(provider, 'away');
 	}
 
@@ -306,7 +316,7 @@ export class ClinicSim {
 		const backlog = this.patients.filter(
 			(p) => p.providerId === provider.id && ['waiting', 'rooming', 'ready'].includes(p.phase),
 		).length;
-		this.note(this.now, `${provider.name} back. ${backlog} patient${backlog === 1 ? '' : 's'} waiting on them`, 'info');
+		this.note(this.now, { kind: 'provider-back', name: provider.name, waiting: backlog }, 'info');
 		this.dispatch();
 	}
 
@@ -379,7 +389,7 @@ export class ClinicSim {
 			this.setStatus(provider, 'visit');
 			const wait = this.now - waitStart(next);
 			if (wait >= LONG_WAIT) {
-				this.note(this.now, `${provider.name} sees a patient who waited ${Math.round(wait)} min`, 'warn');
+				this.note(this.now, { kind: 'long-wait', name: provider.name, minutes: Math.round(wait) }, 'warn');
 			}
 
 			this.sim.after(provider.meanVisit * next.visitFactor, () => {
@@ -413,7 +423,7 @@ export class ClinicSim {
 			p.phase = 'gone';
 			p.tDone = this.now;
 			this.lastActivity = this.now;
-			if (this.dayComplete()) this.note(this.now, 'Last patient out. Day complete', 'good');
+			if (this.dayComplete()) this.note(this.now, { kind: 'day-complete' }, 'good');
 			this.dispatch();
 		});
 	}
@@ -466,8 +476,8 @@ export class ClinicSim {
 		p.seat = null;
 	}
 
-	private note(time: number, text: string, tone: LogEntry['tone']): void {
-		this.log.push({ time, text, tone });
+	private note(time: number, event: ClinicEvent, tone: LogEntry['tone']): void {
+		this.log.push({ time, event, tone });
 	}
 
 	dayComplete(): boolean {

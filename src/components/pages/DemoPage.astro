@@ -1,0 +1,36 @@
+---
+import { langFromPath } from '../../i18n';
+import { DEMOS } from '../../i18n/demos';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactCTA from '../ContactCTA.astro';
+import Hero from '../Hero.astro';
+
+interface Props {
+	industry: 'healthcare' | 'cold-chain';
+}
+
+const { industry } = Astro.props;
+const c = DEMOS[industry][langFromPath(Astro.url.pathname)];
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+	<div class="stack gap-20">
+		<main class="wrapper stack gap-8">
+			<Hero title={c.title} tagline={c.tagline} align="start" />
+
+			<slot />
+
+			<p class="disclaimer">{c.disclaimer}</p>
+		</main>
+
+		<ContactCTA industry={industry} captureScenario title={c.cta} />
+	</div>
+</BaseLayout>
+
+<style>
+	.disclaimer {
+		font-size: var(--text-sm);
+		color: var(--gray-400);
+		max-width: 70ch;
+	}
+</style>

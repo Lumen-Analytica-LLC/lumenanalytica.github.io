@@ -1,3 +1,5 @@
+import type { Lang } from '../../../i18n';
+import { COLD_TEXT } from '../../../i18n/twins';
 import { fitCanvas, readTheme, roundRect, type Theme, withAlpha } from '../../render/canvas';
 import {
 	BAYS,
@@ -58,10 +60,14 @@ export class ColdStorageRenderer {
 	private forkliftHeadings = new Map<number, number>();
 	private readonly stopFit: () => void;
 
+	private readonly text: (typeof COLD_TEXT)['en'];
+
 	constructor(
 		private readonly canvas: HTMLCanvasElement,
 		private readonly themeRoot: Element,
+		lang: Lang = 'en',
 	) {
+		this.text = COLD_TEXT[lang];
 		this.ctx = canvas.getContext('2d')!;
 		this.theme = readTheme(themeRoot);
 		this.stopFit = fitCanvas(canvas, (width) => {
@@ -327,11 +333,11 @@ export class ColdStorageRenderer {
 	private drawOverlays(sim: ColdStorageSim): void {
 		const { ctx, theme: t } = this;
 		const hidden = Math.max(0, sim.yard.length - VISIBLE_QUEUE);
-		if (hidden > 0) this.label(ctx, `+${hidden} at the gate`, 2.2, YARD_LANE_Y + 1.9, 0.6, t.bad, 'left', 600);
+		if (hidden > 0) this.label(ctx, this.text.canvas.atGate(hidden), 2.2, YARD_LANE_Y + 1.9, 0.6, t.bad, 'left', 600);
 		const precoolUsed = sim.precool.filter((id) => id !== null).length;
-		this.label(ctx, `${precoolUsed}/${sim.precool.length} pallets`, ROOMS.precool.x + 2.2, ROOM_WALL_Y + 1.35, 0.45, t.label, 'left');
+		this.label(ctx, this.text.canvas.pallets(precoolUsed, sim.precool.length), ROOMS.precool.x + 2.2, ROOM_WALL_Y + 1.35, 0.45, t.label, 'left');
 		const queued = sim.inspectionQueue.length + sim.inspectorsBusy;
-		if (queued) this.label(ctx, `${queued} load${queued === 1 ? '' : 's'} in inspection`, ROOMS.hold.x + 4.4, ROOM_WALL_Y + 1.35, 0.45, t.hold, 'center', 600);
+		if (queued) this.label(ctx, this.text.canvas.inInspection(queued), ROOMS.hold.x + 4.4, ROOM_WALL_Y + 1.35, 0.45, t.hold, 'center', 600);
 	}
 
 	/** Static parts of the facility, cached until resize, theme change, or layout change. */
@@ -371,7 +377,7 @@ export class ColdStorageRenderer {
 				ctx.stroke();
 			}
 		}
-		this.label(ctx, 'From the bridge →', 0.2, YARD_LANE_Y - 0.05, 0.5, t.label, 'left');
+		this.label(ctx, this.text.canvas.fromBridge, 0.2, YARD_LANE_Y - 0.05, 0.5, t.label, 'left');
 
 		// Building floors
 		ctx.fillStyle = t['floor-alt'];
@@ -413,18 +419,18 @@ export class ColdStorageRenderer {
 		// Labels
 		for (const [zone, room] of Object.entries(ROOMS) as [string, (typeof ROOMS)[keyof typeof ROOMS]][]) {
 			const color = tints[zone as keyof typeof tints];
-			this.label(ctx, room.label, room.x + room.w / 2 + 0.6, ROOM_WALL_Y + 0.55, 0.6, t['label-strong']);
+			this.label(ctx, this.text.areas[zone as keyof typeof tints], room.x + room.w / 2 + 0.6, ROOM_WALL_Y + 0.55, 0.6, t['label-strong']);
 			if (zone !== 'precool' && zone !== 'hold') this.label(ctx, room.temp, room.x + room.w - 1, ROOM_WALL_Y + 0.55, 0.5, color, 'right', 600);
 		}
-		this.label(ctx, 'Chargers', 2.7, 14.95, 0.5, t.label);
+		this.label(ctx, this.text.canvas.chargers, 2.7, 14.95, 0.5, t.label);
 		for (let door = 0; door < MAX_INBOUND_DOORS; door++) {
 			this.label(ctx, door < openDoors ? `I${door + 1}` : '—', inboundDoorX(door), DOCK_WALL_Y + 0.45, 0.5, t.label);
 		}
 		for (let door = 0; door < OUTBOUND_DOORS; door++) {
 			this.label(ctx, `O${door + 1}`, outboundDoorX(door), DOCK_WALL_Y + 0.45, 0.5, t.label);
 		}
-		this.label(ctx, 'Inbound doors', (inboundDoorX(0) + inboundDoorX(MAX_INBOUND_DOORS - 1)) / 2, 13.75, 0.55, t.label);
-		this.label(ctx, 'Outbound', (outboundDoorX(0) + outboundDoorX(OUTBOUND_DOORS - 1)) / 2, 13.75, 0.55, t.label);
+		this.label(ctx, this.text.canvas.inboundDoors, (inboundDoorX(0) + inboundDoorX(MAX_INBOUND_DOORS - 1)) / 2, 13.75, 0.55, t.label);
+		this.label(ctx, this.text.canvas.outbound, (outboundDoorX(0) + outboundDoorX(OUTBOUND_DOORS - 1)) / 2, 13.75, 0.55, t.label);
 
 		this.base = base;
 		this.baseKey = `${sim.inboundDoors.length}-${sim.precool.length}`;

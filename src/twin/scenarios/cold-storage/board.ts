@@ -1,3 +1,5 @@
+import type { Lang } from '../../../i18n';
+import { COLD_TEXT } from '../../../i18n/twins';
 import { fitCanvas, readTheme, type Theme, withAlpha } from '../../render/canvas';
 import { type ColdStorageSim, FREE_TIME, OPEN } from './model';
 
@@ -18,10 +20,14 @@ export class DockBoard {
 	private dpr = 1;
 	private readonly stopFit: () => void;
 
+	private readonly text: (typeof COLD_TEXT)['en']['canvas'];
+
 	constructor(
 		private readonly canvas: HTMLCanvasElement,
 		private readonly themeRoot: Element,
+		lang: Lang = 'en',
 	) {
+		this.text = COLD_TEXT[lang].canvas;
 		this.ctx = canvas.getContext('2d')!;
 		this.theme = readTheme(themeRoot);
 		this.stopFit = fitCanvas(canvas, (width) => {
@@ -49,8 +55,8 @@ export class DockBoard {
 		const end = Math.max(MIN_END, Math.ceil((sim.now + 30) / 60) * 60);
 		const x = (minutes: number) => gutter + ((minutes - OPEN) / (end - OPEN)) * (this.width - gutter - 8);
 		const rows = [
-			...sim.inboundDoors.map((_, door) => ({ kind: 'inbound' as const, door, label: `Door I${door + 1}` })),
-			...sim.outboundDoors.map((_, door) => ({ kind: 'outbound' as const, door, label: `Door O${door + 1}` })),
+			...sim.inboundDoors.map((_, door) => ({ kind: 'inbound' as const, door, code: `I${door + 1}` })),
+			...sim.outboundDoors.map((_, door) => ({ kind: 'outbound' as const, door, code: `O${door + 1}` })),
 		];
 		const rowsTop = AXIS_HEIGHT + YARD_ROW_HEIGHT;
 		const bottom = rowsTop + rows.length * ROW_HEIGHT;
@@ -77,7 +83,7 @@ export class DockBoard {
 		// Trucks waiting in the yard, in 10-minute bins
 		ctx.fillStyle = t['label-strong'];
 		ctx.textAlign = 'left';
-		ctx.fillText(narrow ? 'Yard' : 'Yard queue', 4, AXIS_HEIGHT + YARD_ROW_HEIGHT / 2);
+		ctx.fillText(narrow ? this.text.yard : this.text.yardQueue, 4, AXIS_HEIGHT + YARD_ROW_HEIGHT / 2);
 		const counts: number[] = [];
 		for (let start = OPEN; start < Math.min(sim.now, end); start += BIN) {
 			const mid = start + BIN / 2;
@@ -100,7 +106,7 @@ export class DockBoard {
 			const top = rowsTop + i * ROW_HEIGHT;
 			ctx.fillStyle = t['label-strong'];
 			ctx.textAlign = 'left';
-			ctx.fillText(narrow ? row.label.replace('Door ', '') : row.label, 4, top + ROW_HEIGHT / 2);
+			ctx.fillText(narrow ? row.code : this.text.door(row.code), 4, top + ROW_HEIGHT / 2);
 			ctx.fillStyle = t.furniture;
 			ctx.fillRect(gutter, top + ROW_HEIGHT - 1, this.width - gutter - 8, 1);
 

@@ -1,4 +1,5 @@
 ---
+import { langFromPath, localizePath, UI } from '../../i18n';
 import '../../twin/twin-theme.css';
 
 type Scenario = 'clinic' | 'cold-chain';
@@ -9,44 +10,49 @@ interface Props {
 	href?: string;
 }
 
-const SCENARIOS: Record<Scenario, { href: string; aspect: string; label: string; clock: string; stats: { key: string; label: string }[] }> = {
+const lang = langFromPath(Astro.url.pathname);
+const es = lang === 'es';
+
+const SCENARIOS: Record<Scenario, { href: string; aspect: string; label: string; stats: { key: string; label: string }[] }> = {
 	clinic: {
 		href: '/healthcare/demo/',
 		aspect: '518 / 292',
-		label: 'Animated floor plan of a simulated clinic: patients checking in, waiting, and seeing providers in exam rooms',
-		clock: '8:00 AM',
+		label: es
+			? 'Plano animado de una clínica simulada: pacientes que se registran, esperan y pasan con su médico en los consultorios'
+			: 'Animated floor plan of a simulated clinic: patients checking in, waiting, and seeing providers in exam rooms',
 		stats: [
-			{ key: 'waiting', label: 'in waiting room' },
-			{ key: 'avgWait', label: 'avg wait' },
-			{ key: 'seen', label: 'patients seen' },
+			{ key: 'waiting', label: es ? 'en sala de espera' : 'in waiting room' },
+			{ key: 'avgWait', label: es ? 'espera prom.' : 'avg wait' },
+			{ key: 'seen', label: es ? 'pacientes atendidos' : 'patients seen' },
 		],
 	},
 	'cold-chain': {
 		href: '/cold-chain/demo/',
 		aspect: '660 / 352',
-		label: 'Animated view of a simulated produce cross-dock: trucks queuing and docking while forklifts move pallets into pre-cool, the cooler and the mild room',
-		clock: '10:15 AM',
+		label: es
+			? 'Vista animada de un cross-dock de producto fresco simulado: camiones en fila y en los andenes mientras los montacargas mueven tarimas al preenfriado, la cámara fría y el cuarto templado'
+			: 'Animated view of a simulated produce cross-dock: trucks queuing and docking while forklifts move pallets into pre-cool, the cooler and the mild room',
 		stats: [
-			{ key: 'yard', label: 'trucks in yard' },
-			{ key: 'detention', label: 'detention' },
-			{ key: 'excursions', label: 'warm pallets' },
+			{ key: 'yard', label: es ? 'camiones en el patio' : 'trucks in yard' },
+			{ key: 'detention', label: es ? 'demoras' : 'detention' },
+			{ key: 'excursions', label: es ? 'tarimas calientes' : 'warm pallets' },
 		],
 	},
 };
 
 const { scenario } = Astro.props;
 const config = SCENARIOS[scenario];
-const href = Astro.props.href ?? config.href;
+const href = Astro.props.href ?? localizePath(config.href, lang);
 ---
 
-<figure class="preview twin-theme" data-twin-preview={scenario}>
+<figure class="preview twin-theme" data-twin-preview={scenario} data-lang={lang}>
 	<div class="screen">
 		<canvas data-floor role="img" style={`aspect-ratio: ${config.aspect}`} aria-label={config.label}></canvas>
 	</div>
 	<figcaption class="stats">
 		<div class="badge">
 			<span class="live" aria-hidden="true"></span>
-			<span data-clock>{config.clock}</span>
+			<span data-clock>–</span>
 		</div>
 		{
 			config.stats.map((stat) => (
@@ -56,7 +62,7 @@ const href = Astro.props.href ?? config.href;
 				</div>
 			))
 		}
-		<a href={href} class="open">Open the full twin →</a>
+		<a href={href} class="open">{UI[lang].preview.open}</a>
 	</figcaption>
 </figure>
 
@@ -65,8 +71,9 @@ const href = Astro.props.href ?? config.href;
 	import { mountColdStoragePreview } from '../../twin/scenarios/cold-storage/preview';
 
 	for (const root of document.querySelectorAll<HTMLElement>('[data-twin-preview]')) {
-		if (root.dataset.twinPreview === 'cold-chain') mountColdStoragePreview(root);
-		else mountClinicPreview(root);
+		const lang = root.dataset.lang === 'es' ? 'es' : 'en';
+		if (root.dataset.twinPreview === 'cold-chain') mountColdStoragePreview(root, lang);
+		else mountClinicPreview(root, lang);
 	}
 </script>
 

@@ -68,11 +68,11 @@ export const PARKING: Spot[] = Array.from({ length: MAX_FORKLIFTS }, (_, i) => (
 	zone: 'dock' as const,
 }));
 
-export const ROOMS: Record<Exclude<Zone, 'dock'>, Rect & { label: string; temp: string }> = {
-	precool: { x: 0, y: ROOM_WALL_Y, w: 12, h: WORLD.height - ROOM_WALL_Y, label: 'Pre-cool tunnel', temp: 'Forced air' },
-	hold: { x: 12, y: ROOM_WALL_Y, w: 8, h: WORLD.height - ROOM_WALL_Y, label: 'Inspection hold', temp: '34°F' },
-	cooler: { x: 20, y: ROOM_WALL_Y, w: 26, h: WORLD.height - ROOM_WALL_Y, label: 'Cooler', temp: '34°F' },
-	mild: { x: 46, y: ROOM_WALL_Y, w: 18, h: WORLD.height - ROOM_WALL_Y, label: 'Mild room', temp: '50°F' },
+export const ROOMS: Record<Exclude<Zone, 'dock'>, Rect & { temp: string }> = {
+	precool: { x: 0, y: ROOM_WALL_Y, w: 12, h: WORLD.height - ROOM_WALL_Y, temp: 'Forced air' },
+	hold: { x: 12, y: ROOM_WALL_Y, w: 8, h: WORLD.height - ROOM_WALL_Y, temp: '34°F' },
+	cooler: { x: 20, y: ROOM_WALL_Y, w: 26, h: WORLD.height - ROOM_WALL_Y, temp: '34°F' },
+	mild: { x: 46, y: ROOM_WALL_Y, w: 18, h: WORLD.height - ROOM_WALL_Y, temp: '50°F' },
 };
 
 /** Each room's door sits on the dock wall, at the room's own forklift aisle. */

@@ -1,3 +1,4 @@
+import type { Lang } from '../../../i18n';
 import { watchTheme } from '../../render/canvas';
 import { ColdStorageSim, type ColdStorageConfig, DEFAULT_CONFIG, formatClock } from './model';
 import { ColdStorageRenderer } from './renderer';
@@ -10,7 +11,7 @@ const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD
  * Compact, self-running cross-dock twin for hero sections: facility view, clock and a few
  * headline numbers. Starts as the morning wave builds and loops the day.
  */
-export function mountColdStoragePreview(root: HTMLElement, overrides: Partial<ColdStorageConfig> = {}): void {
+export function mountColdStoragePreview(root: HTMLElement, lang: Lang = 'en', overrides: Partial<ColdStorageConfig> = {}): void {
 	const canvas = root.querySelector<HTMLCanvasElement>('[data-floor]')!;
 	const clock = root.querySelector<HTMLElement>('[data-clock]')!;
 	const stat = (name: string) => root.querySelector<HTMLElement>(`[data-stat="${name}"]`)!;
@@ -22,7 +23,7 @@ export function mountColdStoragePreview(root: HTMLElement, overrides: Partial<Co
 	let simTime = reducedMotion ? 15 * 60 : START;
 	sim.advance(simTime);
 
-	const renderer = new ColdStorageRenderer(canvas, root);
+	const renderer = new ColdStorageRenderer(canvas, root, lang);
 	watchTheme(() => renderer.refreshTheme());
 
 	let visible = true;
@@ -51,7 +52,7 @@ export function mountColdStoragePreview(root: HTMLElement, overrides: Partial<Co
 			if (now - lastStats > 300) {
 				lastStats = now;
 				const m = sim.metrics();
-				clock.textContent = formatClock(sim.now);
+				clock.textContent = formatClock(sim.now, lang);
 				stat('yard').textContent = String(m.inYard);
 				stat('detention').textContent = money.format(m.detentionCost);
 				stat('excursions').textContent = String(m.excursions);

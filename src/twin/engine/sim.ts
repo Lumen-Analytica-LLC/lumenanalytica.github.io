@@ -77,11 +77,12 @@ export class Simulation {
 	}
 }
 
-/** Format minutes-after-midnight as "9:05 AM". */
-export function formatClock(minutes: number): string {
+/** Format minutes-after-midnight as "9:05 AM" (or "9:05 a. m." in Spanish). */
+export function formatClock(minutes: number, lang: 'en' | 'es' = 'en'): string {
 	const total = Math.floor(minutes);
 	const h24 = Math.floor(total / 60) % 24;
 	const m = total % 60;
 	const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
-	return `${h12}:${m.toString().padStart(2, '0')} ${h24 < 12 ? 'AM' : 'PM'}`;
+	const suffix = lang === 'es' ? (h24 < 12 ? 'a. m.' : 'p. m.') : h24 < 12 ? 'AM' : 'PM';
+	return `${h12}:${m.toString().padStart(2, '0')} ${suffix}`;
 }

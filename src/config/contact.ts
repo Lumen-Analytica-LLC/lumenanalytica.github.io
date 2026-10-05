@@ -12,29 +12,39 @@ export const CONTACT = {
 	bookingUrl: 'https://cal.com/lumenanalytica/consultation',
 };
 
+import { type Lang, localizePath } from '../i18n';
+
 export const FORM_ENDPOINT = CONTACT.formspreeId ? `https://formspree.io/f/${CONTACT.formspreeId}` : '';
 
 export type Industry = 'healthcare' | 'cold-chain' | 'education' | 'other';
 
-export const INDUSTRIES: Record<Industry, string> = {
-	healthcare: 'Healthcare (clinic, hospital, urgent care)',
-	'cold-chain': 'Cold storage, 3PL or cross-dock',
-	education: 'Education',
-	other: 'Something else',
+export const INDUSTRIES: Record<Lang, Record<Industry, string>> = {
+	en: {
+		healthcare: 'Healthcare (clinic, hospital, urgent care)',
+		'cold-chain': 'Cold storage, 3PL or cross-dock',
+		education: 'Education',
+		other: 'Something else',
+	},
+	es: {
+		healthcare: 'Salud (clínica, hospital, urgencias)',
+		'cold-chain': 'Almacén frigorífico, 3PL o cross-dock',
+		education: 'Educación',
+		other: 'Otro',
+	},
 };
 
 /** Link to the contact page, pre-selecting an industry and noting where the visitor came from. */
-export function contactHref(industry?: Industry, from?: string): string {
+export function contactHref(industry?: Industry, from?: string, lang: Lang = 'en'): string {
 	const params = new URLSearchParams();
 	if (industry) params.set('industry', industry);
 	if (from) params.set('from', from);
 	const query = params.toString();
-	return `/contact/${query ? `?${query}` : ''}`;
+	return `${localizePath('/contact/', lang)}${query ? `?${query}` : ''}`;
 }
 
 /** Booking page if configured, otherwise the contact form. */
-export function bookingHref(industry?: Industry, from?: string): string {
-	return CONTACT.bookingUrl || contactHref(industry, from);
+export function bookingHref(industry?: Industry, from?: string, lang: Lang = 'en'): string {
+	return CONTACT.bookingUrl || contactHref(industry, from, lang);
 }
 
 /** sessionStorage key for details carried from an ROI calculator or demo to the contact form. */

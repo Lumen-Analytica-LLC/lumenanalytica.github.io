@@ -144,8 +144,10 @@ The clinic simulation is cheap enough to run on the main thread. A Web Worker co
 
 1. **Engine + clinic twin MVP** _(done)_: floor plan, moving agents, provider board, metrics, controls, shareable URL params, `at=` start time.
 2. **Healthcare landing page, homepage hero preview, ROI calculator** _(done)_. Healthcare link added to the nav.
-3. **Cold storage cross-dock twin** _(in progress)_ at `/cold-chain/demo`, then a `/cold-chain` landing page with a detention and spoilage ROI calculator.
-4. **Regional repositioning:** homepage copy for the RGV and South Texas, Spanish versions of the landing pages and demos, retune clinic defaults (no-shows, walk-ins) to regional clinics, `/approach` page absorbing the current services, `/pilot` page.
+3. **Cold storage cross-dock twin** _(done)_ at `/cold-chain/demo`, plus the `/cold-chain` landing page with a detention and spoilage ROI calculator.
+4. **Regional repositioning:**
+   - _Done:_ regional homepage; contact form (Formspree) and Cal.com booking replacing email links, with ROI numbers and demo scenarios attached to inquiries; Spanish versions under `/es/` (home, both landing pages, both demos, contact) with a language switch and hreflang tags. Page text lives in `src/i18n/`.
+   - _Next:_ native-speaker review of the Spanish copy, retune clinic defaults (no-shows, walk-ins) to regional clinics, `/approach` page absorbing the current services, `/pilot` page. Services and About remain English-only for now.
 5. **Side-by-side scenario comparison** (Web Worker, many replications).
 6. **Education:** student services twin (registration, financial aid and advising lines) once a university partner is in place.
 7. **Polish:** click-to-inspect, accessible table view, mobile tuning, explainers that open the demo with settings applied, optional "bring your own schedule" CSV import (processed in the browser only).

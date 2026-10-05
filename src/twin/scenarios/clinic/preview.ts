@@ -1,3 +1,4 @@
+import type { Lang } from '../../../i18n';
 import { watchTheme } from '../../render/canvas';
 import { type ClinicConfig, ClinicSim, DEFAULT_CONFIG, formatClock, OPEN } from './model';
 import { ClinicRenderer } from './renderer';
@@ -8,7 +9,7 @@ const SPEED = 12;
  * Compact, self-running clinic twin for hero sections: floor plan, clock and a few
  * headline numbers. Loops the day and has no controls.
  */
-export function mountClinicPreview(root: HTMLElement, overrides: Partial<ClinicConfig> = {}): void {
+export function mountClinicPreview(root: HTMLElement, lang: Lang = 'en', overrides: Partial<ClinicConfig> = {}): void {
 	const canvas = root.querySelector<HTMLCanvasElement>('[data-floor]')!;
 	const clock = root.querySelector<HTMLElement>('[data-clock]')!;
 	const values = (name: string) => root.querySelector<HTMLElement>(`[data-stat="${name}"]`)!;
@@ -20,7 +21,7 @@ export function mountClinicPreview(root: HTMLElement, overrides: Partial<ClinicC
 	let simTime = reducedMotion ? 10 * 60 + 30 : OPEN + 30;
 	sim.advance(simTime);
 
-	const renderer = new ClinicRenderer(canvas, root);
+	const renderer = new ClinicRenderer(canvas, root, lang);
 	watchTheme(() => renderer.refreshTheme());
 
 	let visible = true;
@@ -50,7 +51,7 @@ export function mountClinicPreview(root: HTMLElement, overrides: Partial<ClinicC
 			if (now - lastStats > 300) {
 				lastStats = now;
 				const m = sim.metrics();
-				clock.textContent = formatClock(sim.now);
+				clock.textContent = formatClock(sim.now, lang);
 				values('waiting').textContent = String(m.inWaitingRoom);
 				values('avgWait').textContent = m.avgWait === null ? '–' : `${Math.round(m.avgWait)} min`;
 				values('seen').textContent = String(m.seen);

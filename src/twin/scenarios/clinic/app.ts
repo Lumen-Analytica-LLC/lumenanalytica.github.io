@@ -1,3 +1,5 @@
+import type { Lang } from '../../../i18n';
+import { CLINIC_TEXT } from '../../../i18n/twins';
 import { watchTheme } from '../../render/canvas';
 import { ProviderBoard } from './board';
 import {
@@ -38,6 +40,9 @@ export function mountClinicTwin(root: HTMLElement): void {
 	const clock = $<HTMLElement>('[data-clock]');
 	const log = $<HTMLOListElement>('[data-log]');
 	const summary = $<HTMLElement>('[data-summary]');
+	const lang: Lang = root.dataset.lang === 'es' ? 'es' : 'en';
+	const text = CLINIC_TEXT[lang];
+	const clockText = (t: number) => formatClock(t, lang);
 
 	const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let config = readConfigFromUrl();
@@ -52,7 +57,7 @@ export function mountClinicTwin(root: HTMLElement): void {
 	let lastPanels = 0;
 	let renderedLogLength = -1;
 
-	const renderer = new ClinicRenderer(floorCanvas, root);
+	const renderer = new ClinicRenderer(floorCanvas, root, lang);
 	const board = new ProviderBoard(boardCanvas, root);
 	watchTheme(() => {
 		renderer.refreshTheme();
@@ -112,7 +117,7 @@ export function mountClinicTwin(root: HTMLElement): void {
 	function setPlaying(next: boolean): void {
 		playing = next;
 		playButton.setAttribute('aria-pressed', String(playing));
-		playButton.querySelector('[data-label]')!.textContent = playing ? 'Pause' : 'Play';
+		playButton.querySelector('[data-label]')!.textContent = playing ? text.pause : text.play;
 	}
 
 	function sizeBoard(): void {
@@ -150,29 +155,30 @@ export function mountClinicTwin(root: HTMLElement): void {
 	// ------------------------------------------------------------ panels
 
 	function updatePanels(force: boolean): void {
-		clock.textContent = formatClock(sim.now);
+		clock.textContent = clockText(sim.now);
 		const m = sim.metrics();
+		const sub = text.sub;
 
-		setKpi('avgWait', minutes(m.avgWait), toneFor(m.avgWait, 15, 25), `${m.seen} patients seen`);
-		setKpi('p90Wait', minutes(m.p90Wait), toneFor(m.p90Wait, 30, 45), '1 in 10 wait at least this long');
-		setKpi('waiting', String(m.inWaitingRoom), toneFor(m.inWaitingRoom, 6, 12), `${m.arrived} arrived so far`);
+		setKpi('avgWait', minutes(m.avgWait), toneFor(m.avgWait, 15, 25), sub.seen(m.seen));
+		setKpi('p90Wait', minutes(m.p90Wait), toneFor(m.p90Wait, 30, 45), sub.p90);
+		setKpi('waiting', String(m.inWaitingRoom), toneFor(m.inWaitingRoom, 6, 12), sub.arrived(m.arrived));
 		setKpi(
 			'lwbs',
 			String(m.leftWithoutBeingSeen),
 			m.leftWithoutBeingSeen === 0 ? 'good' : m.leftWithoutBeingSeen <= 2 ? 'warn' : 'bad',
-			'Walk-ins who gave up',
+			sub.lwbs,
 		);
 		setKpi(
 			'utilization',
 			m.utilization === null ? '–' : `${Math.round(m.utilization * 100)}%`,
 			'neutral',
-			'Provider time with patients',
+			sub.utilization,
 		);
 		setKpi(
 			'finish',
-			m.finish === null ? 'Running' : formatClock(m.finish),
+			m.finish === null ? sub.running : clockText(m.finish),
 			m.finish === null ? 'neutral' : toneFor(m.overtime, 10, 30),
-			m.overtime > 0 ? `${Math.round(m.overtime)} min past 5:00 PM close` : 'Close is 5:00 PM',
+			m.overtime > 0 ? sub.overtime(Math.round(m.overtime)) : sub.close,
 		);
 
 		if (force || sim.log.length !== renderedLogLength) renderLog();
@@ -195,8 +201,8 @@ export function mountClinicTwin(root: HTMLElement): void {
 					const li = document.createElement('li');
 					li.dataset.tone = entry.tone;
 					const time = document.createElement('time');
-					time.textContent = formatClock(entry.time);
-					li.append(time, ` ${entry.text}`);
+					time.textContent = clockText(entry.time);
+					li.append(time, ` ${text.event(entry.event)}`);
 					return li;
 				}),
 		);
@@ -205,13 +211,16 @@ export function mountClinicTwin(root: HTMLElement): void {
 	function showSummary(m: ClinicMetrics): void {
 		const suggestion =
 			config.template !== 'staggered'
-				? 'Try the staggered template and see what happens to the wait.'
+				? text.suggestions.staggered
 				: config.walkInsPerHour > 2
-					? 'Try another exam room or provider to absorb the walk-ins.'
-					: 'Try pulling a provider away mid-morning to stress-test the day.';
-		summary.querySelector('[data-summary-text]')!.textContent =
-			`Average wait ${minutes(m.avgWait)}, ${m.leftWithoutBeingSeen} walk-in${m.leftWithoutBeingSeen === 1 ? '' : 's'} lost, ` +
-			`last patient out at ${formatClock(m.finish ?? sim.now)}. ${suggestion}`;
+					? text.suggestions.capacity
+					: text.suggestions.disrupt;
+		summary.querySelector('[data-summary-text]')!.textContent = text.summary(
+			minutes(m.avgWait),
+			m.leftWithoutBeingSeen,
+			clockText(m.finish ?? sim.now),
+			suggestion,
+		);
 		summary.hidden = false;
 	}
 }

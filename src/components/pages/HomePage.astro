@@ -1,0 +1,384 @@
+---
+import { bookingHref, CONTACT, contactHref } from '../../config/contact';
+import { langFromPath, localizePath, UI } from '../../i18n';
+import { HOME } from '../../i18n/home';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/industry.css';
+import CallToAction from '../CallToAction.astro';
+import ContactCTA from '../ContactCTA.astro';
+import Icon from '../Icon.astro';
+import TwinPreview from '../twin/TwinPreview.astro';
+
+const lang = langFromPath(Astro.url.pathname);
+const c = HOME[lang];
+const cta = UI[lang].cta;
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper hero">
+			<div class="hero-copy stack gap-8">
+				<p class="eyebrow">{c.eyebrow}</p>
+				<h1>{c.h1}</h1>
+				<p class="lede">{c.lede}</p>
+				<div class="actions">
+					<CallToAction href={bookingHref(undefined, 'home', lang)}>
+						{CONTACT.bookingUrl ? cta.book : cta.talk}
+						<Icon icon="arrow-right" size="1.2em" />
+					</CallToAction>
+					<a class="secondary" href="#industries">{c.seeWhat}</a>
+				</div>
+			</div>
+
+			<div class="hero-twins" data-twin-tabs>
+				<div class="tabs" role="tablist" aria-label={c.tabs.label}>
+					<button type="button" role="tab" id="tab-clinic" aria-controls="panel-clinic" aria-selected="true">{c.tabs.clinic}</button>
+					<button type="button" role="tab" id="tab-cold" aria-controls="panel-cold" aria-selected="false" tabindex="-1">
+						{c.tabs.cold}
+					</button>
+				</div>
+				<div role="tabpanel" id="panel-clinic" aria-labelledby="tab-clinic">
+					<TwinPreview scenario="clinic" />
+				</div>
+				<div role="tabpanel" id="panel-cold" aria-labelledby="tab-cold" hidden>
+					<TwinPreview scenario="cold-chain" />
+				</div>
+			</div>
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section" id="industries">
+				<header class="section-header">
+					<h2>{c.industries.title}</h2>
+					<p>{c.industries.intro}</p>
+				</header>
+				<ul class="industry-cards">
+					{
+						c.industries.items.map((industry) => (
+							<li class="card industry-card">
+								<h3>{industry.title}</h3>
+								<p>{industry.body}</p>
+								<ul class="points">
+									{industry.points.map((point) => <li>{point}</li>)}
+								</ul>
+								<div class="card-actions">
+									<a class="card-primary" href={localizePath(industry.href, lang)}>
+										{c.industries.learnMore} <Icon icon="arrow-right" size="1em" />
+									</a>
+									<a class="secondary" href={localizePath(industry.demo, lang)}>
+										{industry.demoLabel}
+									</a>
+								</div>
+							</li>
+						))
+					}
+					<li class="card industry-card education">
+						<h3>{c.industries.education.title}</h3>
+						<p>{c.industries.education.body}</p>
+						<div class="card-actions">
+							<a class="secondary" href={contactHref('education', 'home', lang)}>{c.industries.education.cta}</a>
+						</div>
+					</li>
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.results.title}</h2>
+					<p>{c.results.intro}</p>
+				</header>
+				<ul class="results">
+					{
+						c.results.items.map((result) => (
+							<li class="card result">
+								<p class="result-label">{result.label}</p>
+								<p class="result-values">
+									<span class="before">{result.before}</span>
+									<Icon icon="arrow-right" size="1em" />
+									<span class="after">{result.after}</span>
+								</p>
+								<p class="result-note">{result.note}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.reasons.title}</h2>
+					<p>{c.reasons.intro}</p>
+				</header>
+				<ul class="cards cards-3">
+					{
+						c.reasons.items.map((reason) => (
+							<li class="card">
+								<h3>{reason.title}</h3>
+								<p>{reason.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.build.title}</h2>
+					<p>{c.build.intro}</p>
+				</header>
+				<ol class="build-steps">
+					{
+						c.build.items.map((step, i) => (
+							<li class="card">
+								<span class="step-number">{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.body}</p>
+								<a class="step-link" href={`/services/${step.service}/`}>
+									{c.build.link}
+								</a>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="card region">
+				<div class="stack gap-4">
+					<h2>{c.region.title}</h2>
+					<p>{c.region.body}</p>
+				</div>
+				<ul class="places" aria-label={c.region.label}>
+					{c.region.places.map((place) => <li>{place}</li>)}
+				</ul>
+			</section>
+		</main>
+
+		<ContactCTA />
+	</div>
+</BaseLayout>
+
+<script>
+	// Hero toggle between the clinic and cold chain twins (only the visible one animates).
+	for (const tabs of document.querySelectorAll<HTMLElement>('[data-twin-tabs]')) {
+		const buttons = [...tabs.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const select = (button: HTMLButtonElement) => {
+			for (const other of buttons) {
+				const selected = other === button;
+				other.setAttribute('aria-selected', String(selected));
+				other.tabIndex = selected ? 0 : -1;
+				document.getElementById(other.getAttribute('aria-controls')!)!.hidden = !selected;
+			}
+		};
+		buttons.forEach((button, i) => {
+			button.addEventListener('click', () => select(button));
+			button.addEventListener('keydown', (event) => {
+				if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+				const next = buttons[(i + (event.key === 'ArrowRight' ? 1 : buttons.length - 1)) % buttons.length];
+				select(next);
+				next.focus();
+			});
+		});
+	}
+</script>
+
+<style>
+	.hero-twins {
+		display: grid;
+		gap: 0.75rem;
+		min-width: 0;
+	}
+
+	.tabs {
+		display: inline-flex;
+		justify-self: start;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 999rem;
+		background: var(--gray-999);
+	}
+
+	.tabs button {
+		border: 0;
+		background: none;
+		color: var(--gray-300);
+		font: inherit;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		padding: 0.35rem 1rem;
+		border-radius: 999rem;
+		cursor: pointer;
+	}
+
+	.tabs button[aria-selected='true'] {
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+	}
+
+	.tabs button:focus-visible {
+		outline: 2px solid var(--accent-regular);
+		outline-offset: 2px;
+	}
+
+	[role='tabpanel'][hidden] {
+		display: none;
+	}
+
+	.industry-cards,
+	.results,
+	.build-steps,
+	.places {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.industry-card {
+		gap: 1rem;
+	}
+
+	.industry-card h3 {
+		font-size: var(--text-xl);
+	}
+
+	.points {
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.35rem;
+		color: var(--gray-200);
+	}
+
+	.card-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+		margin-top: auto;
+	}
+
+	.card-primary {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.55rem 1.2rem;
+		border-radius: 999rem;
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.card-primary:hover {
+		filter: brightness(1.15);
+	}
+
+	.result {
+		gap: 0.4rem;
+	}
+
+	.result-label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--gray-200);
+	}
+
+	.result-values {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: var(--font-brand);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.before {
+		font-size: var(--text-lg);
+		color: var(--gray-400);
+		text-decoration: line-through;
+		text-decoration-thickness: 1px;
+	}
+
+	.after {
+		font-size: var(--text-2xl);
+		font-weight: 700;
+		color: var(--accent-dark);
+	}
+
+	.result-note {
+		font-size: 0.8rem;
+		color: var(--gray-400);
+	}
+
+	.build-steps .card {
+		gap: 0.5rem;
+	}
+
+	.step-link {
+		margin-top: auto;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--accent-dark);
+	}
+
+	.region {
+		display: grid;
+		gap: 1.5rem;
+		align-items: center;
+		padding: 2rem;
+	}
+
+	.region h2 {
+		font-size: var(--text-2xl);
+		color: var(--gray-0);
+	}
+
+	.region p {
+		max-width: 65ch;
+		color: var(--gray-300);
+	}
+
+	.places li {
+		padding: 0.6rem 1.2rem;
+		border-radius: 999rem;
+		border: 1px solid var(--accent-regular);
+		color: var(--gray-0);
+		font-weight: 600;
+		text-align: center;
+	}
+
+	@media (min-width: 40em) {
+		.results {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.build-steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 50em) {
+		.industry-cards {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.education {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 64em) {
+		.results {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+
+		.build-steps {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+		}
+
+		.region {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+			padding: 3rem;
+		}
+	}
+</style>

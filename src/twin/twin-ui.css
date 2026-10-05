@@ -267,14 +267,16 @@
 .twin .segmented {
 	display: flex;
 	border: 1px solid var(--gray-800);
-	border-radius: 999rem;
+	border-radius: 1.1rem;
 	padding: 0.2rem;
 	gap: 0.2rem;
 }
 
 .twin .segmented label {
 	flex: 1;
+	min-width: 0;
 	position: relative;
+	display: flex;
 }
 
 .twin .segmented input {
@@ -285,12 +287,17 @@
 }
 
 .twin .segmented span {
-	display: block;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
 	text-align: center;
 	padding: 0.3rem 0.4rem;
-	border-radius: 999rem;
+	border-radius: 0.9rem;
 	font-size: 0.8rem;
-	white-space: nowrap;
+	line-height: 1.2;
+	/* Longer labels (e.g. in Spanish) wrap instead of pushing the panel wider. */
+	overflow-wrap: anywhere;
 }
 
 .twin .segmented input:checked + span {

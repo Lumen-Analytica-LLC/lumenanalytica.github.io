@@ -1,3 +1,5 @@
+import type { Lang } from '../../../i18n';
+import { COLD_TEXT } from '../../../i18n/twins';
 import { watchTheme } from '../../render/canvas';
 import { DockBoard } from './board';
 import {
@@ -44,6 +46,9 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 	const clock = $<HTMLElement>('[data-clock]');
 	const log = $<HTMLOListElement>('[data-log]');
 	const summary = $<HTMLElement>('[data-summary]');
+	const lang: Lang = root.dataset.lang === 'es' ? 'es' : 'en';
+	const text = COLD_TEXT[lang];
+	const clockText = (t: number) => formatClock(t, lang);
 
 	const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let config = readConfigFromUrl();
@@ -58,8 +63,8 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 	let lastPanels = 0;
 	let renderedLogLength = -1;
 
-	const renderer = new ColdStorageRenderer(floorCanvas, root);
-	const board = new DockBoard(boardCanvas, root);
+	const renderer = new ColdStorageRenderer(floorCanvas, root, lang);
+	const board = new DockBoard(boardCanvas, root, lang);
 	watchTheme(() => {
 		renderer.refreshTheme();
 		board.refreshTheme();
@@ -118,7 +123,7 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 	function setPlaying(next: boolean): void {
 		playing = next;
 		playButton.setAttribute('aria-pressed', String(playing));
-		playButton.querySelector('[data-label]')!.textContent = playing ? 'Pause' : 'Play';
+		playButton.querySelector('[data-label]')!.textContent = playing ? text.pause : text.play;
 	}
 
 	function sizeBoard(): void {
@@ -156,30 +161,26 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 	// ------------------------------------------------------------ panels
 
 	function updatePanels(force: boolean): void {
-		clock.textContent = formatClock(sim.now);
+		clock.textContent = clockText(sim.now);
 		const m = sim.metrics();
 		const excursionShare = m.received ? m.excursions / m.received : 0;
+		const sub = text.sub;
 
-		setKpi('turn', minutes(m.avgTurn), toneFor(m.avgTurn, 60, 120), `${m.trucksDone} of ${m.trucksTotal} trucks done`);
-		setKpi(
-			'detention',
-			money.format(m.detentionCost),
-			toneFor(m.detentionCost, 250, 1000),
-			'Past 2 h free time at $75/h',
-		);
-		setKpi('yard', String(m.inYard), toneFor(m.inYard, 2, 5), 'Trucks waiting for a door');
+		setKpi('turn', minutes(m.avgTurn), toneFor(m.avgTurn, 60, 120), sub.trucksDone(m.trucksDone, m.trucksTotal));
+		setKpi('detention', money.format(m.detentionCost), toneFor(m.detentionCost, 250, 1000), sub.detention);
+		setKpi('yard', String(m.inYard), toneFor(m.inYard, 2, 5), sub.yard);
 		setKpi(
 			'excursions',
 			String(m.excursions),
 			m.received ? toneFor(excursionShare, 0.05, 0.15) : 'neutral',
-			`of ${m.received} pallets, ${EXCURSION_MINUTES}+ min on dock`,
+			sub.excursions(m.received, EXCURSION_MINUTES),
 		);
-		setKpi('dwell', minutes(m.avgDockDwell), toneFor(m.avgDockDwell, 15, 25), 'Unload to put-away');
+		setKpi('dwell', minutes(m.avgDockDwell), toneFor(m.avgDockDwell, 15, 25), sub.dwell);
 		setKpi(
 			'utilization',
 			m.utilization === null ? '–' : `${Math.round(m.utilization * 100)}%`,
 			'neutral',
-			`${config.forklifts} forklift drivers`,
+			sub.drivers(config.forklifts),
 		);
 
 		if (force || sim.log.length !== renderedLogLength) renderLog();
@@ -200,8 +201,8 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 				const li = document.createElement('li');
 				li.dataset.tone = entry.tone;
 				const time = document.createElement('time');
-				time.textContent = formatClock(entry.time);
-				li.append(time, ` ${entry.text}`);
+				time.textContent = clockText(entry.time);
+				li.append(time, ` ${text.event(entry.event)}`);
 				return li;
 			}),
 		);
@@ -210,16 +211,20 @@ export function mountColdStorageTwin(root: HTMLElement): void {
 	function showSummary(m: ColdStorageMetrics): void {
 		const suggestion =
 			config.priority === 'unload-first'
-				? 'Try Balanced forklift priority and watch the warm pallets.'
+				? text.suggestions.balanced
 				: config.pattern === 'waves'
-					? 'Try dock appointments instead of bridge waves.'
+					? text.suggestions.appointments
 					: config.forklifts < 8
-						? 'Try another forklift driver at the peak.'
-						: 'Try a peak-season surge to stress-test the dock.';
-		const ended = m.dayComplete ? `last truck out at ${formatClock(m.finish ?? sim.now)}` : 'trucks still on site at midnight';
-		summary.querySelector('[data-summary-text]')!.textContent =
-			`Average truck turn ${minutes(m.avgTurn)}, ${money.format(m.detentionCost)} in detention, ` +
-			`${m.excursions} pallets warmed on the dock, ${ended}. ${suggestion}`;
+						? text.suggestions.driver
+						: text.suggestions.surge;
+		const ended = m.dayComplete ? text.ended(clockText(m.finish ?? sim.now)) : text.notEnded;
+		summary.querySelector('[data-summary-text]')!.textContent = text.summary(
+			minutes(m.avgTurn),
+			money.format(m.detentionCost),
+			m.excursions,
+			ended,
+			suggestion,
+		);
 		summary.hidden = false;
 	}
 }

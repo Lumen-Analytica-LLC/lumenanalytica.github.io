@@ -1,5 +1,6 @@
 ---
 import { contactHref } from '../../config/contact';
+import { langFromPath, UI } from '../../i18n';
 import { ROI_MODELS, type RoiModelName } from '../../twin/roi';
 
 interface Props {
@@ -8,15 +9,17 @@ interface Props {
 }
 
 const { model } = Astro.props;
+const lang = langFromPath(Astro.url.pathname);
+const t = UI[lang].roi;
 const { inputs, outputs, subject, industry } = ROI_MODELS[model];
 ---
 
-<form class="roi" data-roi={model}>
+<form class="roi" data-roi={model} data-lang={lang}>
 	<div class="inputs">
 		{
 			inputs.map((input) => (
 				<label class="field">
-					<span class="label">{input.label}</span>
+					<span class="label">{input.label[lang]}</span>
 					<span class="input-wrap">
 						{'prefix' in input && <span class="prefix">{input.prefix}</span>}
 						<input
@@ -29,41 +32,42 @@ const { inputs, outputs, subject, industry } = ROI_MODELS[model];
 							step={input.step}
 						/>
 					</span>
-					{'hint' in input && <span class="hint">{input.hint}</span>}
+					{'hint' in input && <span class="hint">{input.hint[lang]}</span>}
 				</label>
 			))
 		}
 
 		<label class="field field-wide">
 			<span class="label-row">
-				<span class="label">Improvement from changes tested in the twin</span>
+				<span class="label">{t.improvement}</span>
 				<output data-improvement-out>25%</output>
 			</span>
 			<input type="range" name="improvement" min="5" max="60" step="5" value="25" />
-			<span class="hint">An assumption, not a promise. The pilot measures the real number for {subject}.</span>
+			<span class="hint">{t.improvementHint(subject[lang])}</span>
 		</label>
 	</div>
 
 	<div class="results" aria-live="polite">
-		<p class="eyebrow">Estimated annual impact</p>
+		<p class="eyebrow">{t.eyebrow}</p>
 		<p class="total" data-out="total">–</p>
 		<dl>
 			{
 				outputs.map((output) => (
 					<div>
-						<dt>{output.label}</dt>
+						<dt>{output.label[lang]}</dt>
 						<dd data-out={output.key}>–</dd>
 					</div>
 				))
 			}
 		</dl>
-		<a class="send" data-send href={contactHref(industry, 'roi')}>Send these numbers with your inquiry →</a>
-		<p class="fine">Estimates use only the numbers you enter. Nothing is sent until you submit the contact form.</p>
+		<a class="send" data-send href={contactHref(industry, 'roi', lang)}>{t.send}</a>
+		<p class="fine">{t.fine}</p>
 	</div>
 </form>
 
 <script>
 	import { HANDOFF_KEY } from '../../config/contact';
+	import { type Lang, UI } from '../../i18n';
 	import { ROI_MODELS, type RoiModel, type RoiModelName } from '../../twin/roi';
 
 	const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -71,6 +75,8 @@ const { inputs, outputs, subject, industry } = ROI_MODELS[model];
 
 	for (const form of document.querySelectorAll<HTMLFormElement>('[data-roi]')) {
 		const model: RoiModel = ROI_MODELS[form.dataset.roi as RoiModelName];
+		const lang = (form.dataset.lang ?? 'en') as Lang;
+		const t = UI[lang].roi;
 		const out = (name: string) => form.querySelector<HTMLElement>(`[data-out="${name}"]`)!;
 		const send = form.querySelector<HTMLAnchorElement>('[data-send]')!;
 		const improvementOut = form.querySelector<HTMLOutputElement>('[data-improvement-out]')!;
@@ -99,9 +105,9 @@ const { inputs, outputs, subject, industry } = ROI_MODELS[model];
 			out('total').textContent = money.format(results.total);
 
 			summary = [
-				`${model.summaryTitle}: ${money.format(results.total)} a year`,
-				...model.inputs.map((input) => `${input.label}: ${input.prefix ?? ''}${n(input.name)}`),
-				`Assumed improvement: ${Math.round(improvement * 100)}%`,
+				`${model.summaryTitle[lang]}: ${money.format(results.total)} ${t.yearly}`,
+				...model.inputs.map((input) => `${input.label[lang]}: ${input.prefix ?? ''}${n(input.name)}`),
+				`${t.assumed}: ${Math.round(improvement * 100)}%`,
 			].join('\n');
 		};
 

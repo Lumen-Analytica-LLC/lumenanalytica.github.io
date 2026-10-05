@@ -2,15 +2,22 @@
 import Icon from './Icon.astro';
 import type { iconPaths } from './IconPaths';
 import ThemeToggle from './ThemeToggle.astro';
+import { alternateFor, langFromPath, localizePath, UI } from '../i18n';
+
+const lang = langFromPath(Astro.url.pathname);
+const t = UI[lang];
+const otherLang = lang === 'en' ? 'es' : 'en';
+const switchHref = alternateFor(Astro.url.pathname, otherLang);
 
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
-	{ label: 'Home', href: '/' },
-	{ label: 'Healthcare', href: '/healthcare/' },
-	{ label: 'Cold Chain', href: '/cold-chain/' },
-	{ label: 'Services', href: '/services/' },
-	{ label: 'About', href: '/about/' },
+	{ label: t.nav.home, href: localizePath('/', lang) },
+	{ label: t.nav.healthcare, href: localizePath('/healthcare/', lang) },
+	{ label: t.nav.coldChain, href: localizePath('/cold-chain/', lang) },
+	{ label: t.nav.services, href: localizePath('/services/', lang) },
+	{ label: t.nav.about, href: localizePath('/about/', lang) },
 ];
+const homeHrefs = ['/', '/es/'];
 
 /** Icon links to social media — edit these with links to your profiles! */
 const iconLinks: { label: string; href: string; icon: keyof typeof iconPaths }[] = [
@@ -24,7 +31,7 @@ const isCurrentPage = (href: string) => {
 	let pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 	if (pathname.at(0) !== '/') pathname = '/' + pathname;
 	if (pathname.at(-1) !== '/') pathname += '/';
-	return pathname === href || (href !== '/' && pathname.startsWith(href));
+	return pathname === href || (!homeHrefs.includes(href) && pathname.startsWith(href));
 };
 ---
 
@@ -93,6 +100,9 @@ const isCurrentPage = (href: string) => {
 				}
 			</div>
 
+			<a class="lang-switch" href={switchHref} hreflang={otherLang} lang={otherLang} aria-label={t.switchLabel}>
+				{t.switchTo}
+			</a>
 			<div class="theme-toggle">
 				<ThemeToggle />
 			</div>
@@ -254,6 +264,24 @@ const isCurrentPage = (href: string) => {
 	.social:hover,
 	.social:focus {
 		color: var(--accent-text-over);
+	}
+
+	.lang-switch {
+		align-self: center;
+		padding: 0.3rem 0.8rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 999rem;
+		color: var(--gray-200);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.lang-switch:hover,
+	.lang-switch:focus-visible {
+		border-color: var(--accent-regular);
+		color: var(--gray-0);
 	}
 
 	.theme-toggle {

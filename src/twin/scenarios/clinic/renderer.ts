@@ -1,3 +1,5 @@
+import type { Lang } from '../../../i18n';
+import { CLINIC_TEXT } from '../../../i18n/twins';
 import { drawPerson, fitCanvas, readTheme, roundRect, type Theme, withAlpha } from '../../render/canvas';
 import {
 	ASSISTANT_SPOTS,
@@ -77,10 +79,14 @@ export class ClinicRenderer {
 	private agents = new Map<string, Agent>();
 	private readonly stopFit: () => void;
 
+	private readonly text: (typeof CLINIC_TEXT)['en']['canvas'];
+
 	constructor(
 		private readonly canvas: HTMLCanvasElement,
 		private readonly themeRoot: Element,
+		lang: Lang = 'en',
 	) {
+		this.text = CLINIC_TEXT[lang].canvas;
 		this.ctx = canvas.getContext('2d')!;
 		this.theme = readTheme(themeRoot);
 		this.stopFit = fitCanvas(canvas, (width) => {
@@ -307,7 +313,7 @@ export class ClinicRenderer {
 			ctx.textBaseline = 'bottom';
 			for (const agent of agents) {
 				if (!agent.target.label) continue;
-				const text = agent.target.dim ? `${agent.target.label} · away` : agent.target.label;
+				const text = agent.target.dim ? `${agent.target.label} · ${this.text.away}` : agent.target.label;
 				ctx.fillStyle = agent.target.dim ? t.label : t['label-strong'];
 				ctx.fillText(text, agent.x, agent.y - 0.75);
 			}
@@ -371,7 +377,7 @@ export class ClinicRenderer {
 		// Entrance mat and arrow
 		ctx.fillStyle = t.furniture;
 		ctx.fillRect(-2.6, ENTRANCE.y - 1, 2.4, 2);
-		this.label(ctx, 'Entrance', -1.4, ENTRANCE.y + 2, 0.55, t.label);
+		this.label(ctx, this.text.entrance, -1.4, ENTRANCE.y + 2, 0.55, t.label);
 
 		this.drawLobbyFurniture(ctx);
 		this.drawStationFurniture(ctx);
@@ -380,11 +386,11 @@ export class ClinicRenderer {
 		this.drawWalls(ctx);
 
 		// Area labels
-		this.label(ctx, 'Front desk', DESK.x + DESK.w / 2, DESK.y + DESK.h / 2, 0.5, t.label);
-		this.label(ctx, 'Waiting room', 22.2, 3.2, 0.7, t.label);
-		this.label(ctx, 'Care team station', 39.5, 1.2, 0.7, t.label);
-		this.label(ctx, 'Check-in', 5.25, 3.0, 0.45, t.label);
-		this.label(ctx, 'Checkout', 12, 3.0, 0.45, t.label);
+		this.label(ctx, this.text.frontDesk, DESK.x + DESK.w / 2, DESK.y + DESK.h / 2, 0.5, t.label);
+		this.label(ctx, this.text.waitingRoom, 22.2, 3.2, 0.7, t.label);
+		this.label(ctx, this.text.careTeam, 39.5, 1.2, 0.7, t.label);
+		this.label(ctx, this.text.checkin, 5.25, 3.0, 0.45, t.label);
+		this.label(ctx, this.text.checkout, 12, 3.0, 0.45, t.label);
 
 		this.base = base;
 		this.baseRooms = openRooms;
@@ -430,7 +436,7 @@ export class ClinicRenderer {
 		roundRect(ctx, 32, ASSISTANT_SPOTS[0].y + 0.75, 15, 0.9, 0.2);
 		ctx.fillStyle = t.furniture;
 		ctx.fill();
-		this.label(ctx, 'Medical assistants', 39.5, 11.4, 0.45, t.label);
+		this.label(ctx, this.text.assistants, 39.5, 11.4, 0.45, t.label);
 	}
 
 	private drawExamRoom(ctx: CanvasRenderingContext2D, room: number, open: boolean): void {
@@ -450,7 +456,7 @@ export class ClinicRenderer {
 				ctx.stroke();
 			}
 			ctx.restore();
-			this.label(ctx, 'Closed', r.x + r.w / 2, r.y + r.h / 2, 0.5, t.label);
+			this.label(ctx, this.text.closed, r.x + r.w / 2, r.y + r.h / 2, 0.5, t.label);
 			return;
 		}
 		const table = examTable(room);
@@ -468,7 +474,7 @@ export class ClinicRenderer {
 		ctx.beginPath();
 		ctx.arc(stool.x, stool.y, 0.35, 0, Math.PI * 2);
 		ctx.fill();
-		this.label(ctx, `Exam ${room + 1}`, r.x + r.w / 2 - 0.4, r.y + r.h - 1.9, 0.5, t.label);
+		this.label(ctx, this.text.exam(room + 1), r.x + r.w / 2 - 0.4, r.y + r.h - 1.9, 0.5, t.label);
 	}
 
 	private drawWalls(ctx: CanvasRenderingContext2D): void {

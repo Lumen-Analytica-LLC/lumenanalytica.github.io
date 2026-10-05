@@ -1,4 +1,5 @@
 ---
+import { alternateFor, isTranslated, LANGS } from '../i18n';
 import '../styles/global.css';
 
 interface Props {
@@ -10,6 +11,11 @@ const {
 	title = 'Lumen Analytica',
 	description = 'Data consulting and operations research firm specializing in automation, strategic insights, and enterprise analytics solutions. Transform your data into measurable business results.',
 } = Astro.props;
+
+// Tell search engines about the other language version, when there is one.
+const alternates = isTranslated(Astro.url.pathname)
+	? LANGS.map((lang) => ({ lang, href: new URL(alternateFor(Astro.url.pathname, lang), Astro.site).href }))
+	: [];
 ---
 
 <meta charset="UTF-8" />
@@ -17,6 +23,7 @@ const {
 <meta name="viewport" content="width=device-width" />
 <meta name="generator" content={Astro.generator} />
 <title>{title}</title>
+{alternates.map(({ lang, href }) => <link rel="alternate" hreflang={lang} href={href} />)}
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />

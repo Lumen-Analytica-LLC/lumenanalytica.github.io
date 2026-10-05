@@ -1,15 +1,21 @@
 ---
 import '../../twin/twin-theme.css';
 import '../../twin/twin-ui.css';
+import { langFromPath } from '../../i18n';
+import { COLD_TEXT } from '../../i18n/twins';
 import { MAX_FORKLIFTS, MAX_INBOUND_DOORS } from '../../twin/scenarios/cold-storage/layout';
 import {
 	DEFAULT_CONFIG,
 	EXCURSION_MINUTES,
 	FORKLIFTS_DOWN_WINDOW,
 	formatClock,
+	OPEN,
 	PATTERNS,
 	PRIORITIES,
 } from '../../twin/scenarios/cold-storage/model';
+
+const lang = langFromPath(Astro.url.pathname);
+const t = COLD_TEXT[lang];
 
 const speeds = [
 	{ value: 3, label: '3×' },
@@ -19,61 +25,49 @@ const speeds = [
 ];
 const defaultSpeed = 8;
 
-const kpis = [
-	{ key: 'turn', label: 'Avg truck turn' },
-	{ key: 'detention', label: 'Detention cost' },
-	{ key: 'yard', label: 'Trucks in the yard' },
-	{ key: 'excursions', label: 'Temperature excursions' },
-	{ key: 'dwell', label: 'Avg dock dwell' },
-	{ key: 'utilization', label: 'Forklift utilization' },
-];
+const kpis = Object.entries(t.kpis).map(([key, label]) => ({ key, label }));
 
 const legend = [
-	{ token: 'ok', label: `On dock < ${EXCURSION_MINUTES / 2} min` },
-	{ token: 'warn', label: `${EXCURSION_MINUTES / 2}–${EXCURSION_MINUTES} min` },
-	{ token: 'bad', label: `${EXCURSION_MINUTES}+ min (excursion)` },
-	{ token: 'precool', label: 'Pre-cooling' },
-	{ token: 'hold', label: 'Inspection hold' },
-	{ token: 'cold', label: 'Cooler stock' },
-	{ token: 'mild', label: 'Mild room stock' },
+	{ token: 'ok', label: t.legend.ok(EXCURSION_MINUTES / 2) },
+	{ token: 'warn', label: t.legend.warn(EXCURSION_MINUTES / 2, EXCURSION_MINUTES) },
+	{ token: 'bad', label: t.legend.bad(EXCURSION_MINUTES) },
+	{ token: 'precool', label: t.legend.precool },
+	{ token: 'hold', label: t.legend.hold },
+	{ token: 'cold', label: t.legend.cold },
+	{ token: 'mild', label: t.legend.mild },
 ];
 
 const truckLegend = [
-	{ token: 'truck-in', label: 'Inbound' },
-	{ token: 'truck-out', label: 'Outbound' },
-	{ token: 'forklift', label: 'Forklift' },
+	{ token: 'truck-in', label: t.legend.inbound },
+	{ token: 'truck-out', label: t.legend.outbound },
+	{ token: 'forklift', label: t.legend.forklift },
 ];
 
-const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
+const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map((time) => formatClock(time, lang));
 ---
 
-<section class="twin twin-theme" data-cold-storage-twin aria-label="Cold storage cross-dock digital twin simulation">
+<section class="twin twin-theme" data-cold-storage-twin data-lang={lang} aria-label={t.aria}>
 	<div class="toolbar">
-		<div class="clock" aria-label="Simulated time">
-			<span class="clock-label">Dock time</span>
-			<span class="clock-value" data-clock>5:00 AM</span>
+		<div class="clock">
+			<span class="clock-label">{t.clockLabel}</span>
+			<span class="clock-value" data-clock>{formatClock(OPEN, lang)}</span>
 		</div>
 		<div class="transport">
 			<button type="button" class="btn btn-primary" data-play aria-pressed="true">
-				<span data-label>Pause</span>
+				<span data-label>{t.pause}</span>
 			</button>
-			<button type="button" class="btn" data-restart>Restart day</button>
-			<button type="button" class="btn" data-new-day title="Same settings, a different day of trucks">New day</button>
+			<button type="button" class="btn" data-restart>{t.restart}</button>
+			<button type="button" class="btn" data-new-day title={t.newDayTitle}>{t.newDay}</button>
 		</div>
 	</div>
 
 	<div class="layout">
 		<div class="stage">
 			<div class="floor-wrap">
-				<canvas
-					data-floor
-					style="aspect-ratio: 660 / 352"
-					role="img"
-					aria-label="Top-down view of a produce cross-dock: trucks queue in the yard and back into dock doors while forklifts move pallets to the pre-cool tunnel, inspection hold, cooler and mild room"
-				></canvas>
+				<canvas data-floor style="aspect-ratio: 660 / 352" role="img" aria-label={t.floorAria}></canvas>
 			</div>
-			<ul class="legend" aria-label="Pallets">
-				<li class="legend-title">Pallets:</li>
+			<ul class="legend" aria-label={t.legend.pallets}>
+				<li class="legend-title">{t.legend.pallets}</li>
 				{
 					legend.map((item) => (
 						<li>
@@ -83,8 +77,8 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 					))
 				}
 			</ul>
-			<ul class="legend legend-rooms" aria-label="Vehicles">
-				<li class="legend-title">Vehicles:</li>
+			<ul class="legend legend-rooms" aria-label={t.legend.vehicles}>
+				<li class="legend-title">{t.legend.vehicles}</li>
 				{
 					truckLegend.map((item) => (
 						<li>
@@ -93,19 +87,19 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 						</li>
 					))
 				}
-				<li class="legend-title">Trailer stripe shows time on site against 2 h free time.</li>
+				<li class="legend-title">{t.legend.stripe}</li>
 			</ul>
 
 			<div class="panel">
 				<header class="panel-header">
-					<h2>Dock doors</h2>
-					<ul class="legend legend-inline" aria-label="Board legend">
-						<li><span class="swatch" style="background: var(--twin-truck-in)"></span>Inbound at door</li>
-						<li><span class="swatch" style="background: var(--twin-truck-out)"></span>Outbound at door</li>
-						<li><span class="swatch" style="background: var(--twin-bad)"></span>Detention</li>
+					<h2>{t.board.title}</h2>
+					<ul class="legend legend-inline">
+						<li><span class="swatch" style="background: var(--twin-truck-in)"></span>{t.board.inbound}</li>
+						<li><span class="swatch" style="background: var(--twin-truck-out)"></span>{t.board.outbound}</li>
+						<li><span class="swatch" style="background: var(--twin-bad)"></span>{t.board.detention}</li>
 					</ul>
 				</header>
-				<canvas data-board class="board" role="img" aria-label="Timeline of trucks at each dock door, with detention time highlighted, and trucks waiting in the yard"></canvas>
+				<canvas data-board class="board" role="img" aria-label={t.boardAria}></canvas>
 			</div>
 		</div>
 
@@ -123,37 +117,37 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 			</div>
 
 			<div class="summary" data-summary role="status" hidden>
-				<strong>Day complete.</strong>
+				<strong>{t.dayComplete}</strong>
 				<span data-summary-text></span>
 			</div>
 
 			<form class="panel controls" data-controls>
-				<h2>What if…</h2>
-				<p class="hint">Changes replay the day up to now with the same trucks, so you see only the effect of your change.</p>
+				<h2>{t.whatIf}</h2>
+				<p class="hint">{t.hint}</p>
 
 				<label class="field">
-					<span class="field-row"><span>Forklift drivers</span><output for="cs-forklifts"></output></span>
+					<span class="field-row"><span>{t.controls.forklifts}</span><output for="cs-forklifts"></output></span>
 					<input id="cs-forklifts" name="forklifts" type="range" min="3" max={MAX_FORKLIFTS} step="1" value={DEFAULT_CONFIG.forklifts} />
 				</label>
 
 				<label class="field">
-					<span class="field-row"><span>Inbound dock doors</span><output for="cs-doors"></output></span>
+					<span class="field-row"><span>{t.controls.doors}</span><output for="cs-doors"></output></span>
 					<input id="cs-doors" name="doors" type="range" min="3" max={MAX_INBOUND_DOORS} step="1" value={DEFAULT_CONFIG.doors} />
 				</label>
 
 				<label class="field">
-					<span class="field-row"><span>Inbound trucks per day</span><output for="cs-trucks"></output></span>
+					<span class="field-row"><span>{t.controls.trucks}</span><output for="cs-trucks"></output></span>
 					<input id="cs-trucks" name="trucksPerDay" type="range" min="15" max="55" step="1" value={DEFAULT_CONFIG.trucksPerDay} />
 				</label>
 
 				<fieldset class="field">
-					<legend>Truck arrivals</legend>
+					<legend>{t.controls.arrivals}</legend>
 					<div class="segmented">
 						{
-							Object.entries(PATTERNS).map(([value, label]) => (
+							Object.keys(PATTERNS).map((value) => (
 								<label>
 									<input type="radio" name="pattern" value={value} checked={value === DEFAULT_CONFIG.pattern} />
-									<span>{label}</span>
+									<span>{t.patterns[value as keyof typeof t.patterns]}</span>
 								</label>
 							))
 						}
@@ -161,13 +155,13 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 				</fieldset>
 
 				<fieldset class="field">
-					<legend>Forklift priority</legend>
+					<legend>{t.controls.priority}</legend>
 					<div class="segmented">
 						{
-							Object.entries(PRIORITIES).map(([value, label]) => (
+							Object.keys(PRIORITIES).map((value) => (
 								<label>
 									<input type="radio" name="priority" value={value} checked={value === DEFAULT_CONFIG.priority} />
-									<span>{label}</span>
+									<span>{t.priorities[value as keyof typeof t.priorities]}</span>
 								</label>
 							))
 						}
@@ -175,27 +169,27 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 				</fieldset>
 
 				<label class="field">
-					<span class="field-row"><span>Loads held for inspection</span><output for="cs-inspect" data-suffix="%"></output></span>
+					<span class="field-row"><span>{t.controls.inspection}</span><output for="cs-inspect" data-suffix="%"></output></span>
 					<input id="cs-inspect" name="inspectionPct" type="range" min="0" max="40" step="5" value={DEFAULT_CONFIG.inspectionPct} />
 				</label>
 
 				<label class="field">
-					<span class="field-row"><span>Pre-cool tunnel (pallets)</span><output for="cs-precool"></output></span>
+					<span class="field-row"><span>{t.controls.precool}</span><output for="cs-precool"></output></span>
 					<input id="cs-precool" name="precoolCapacity" type="range" min="24" max="96" step="8" value={DEFAULT_CONFIG.precoolCapacity} />
 				</label>
 
 				<label class="check">
 					<input name="surge" type="checkbox" checked={DEFAULT_CONFIG.surge} />
-					<span>Peak-season surge (+40% trucks)</span>
+					<span>{t.controls.surge}</span>
 				</label>
 
 				<label class="check">
 					<input name="forkliftsDown" type="checkbox" checked={DEFAULT_CONFIG.forkliftsDown} />
-					<span>Two forklifts down {downStart}–{downEnd}</span>
+					<span>{t.controls.down(downStart, downEnd)}</span>
 				</label>
 
 				<fieldset class="field">
-					<legend>Playback speed</legend>
+					<legend>{t.speed}</legend>
 					<div class="segmented">
 						{
 							speeds.map((speed) => (
@@ -210,7 +204,7 @@ const [downStart, downEnd] = FORKLIFTS_DOWN_WINDOW.map(formatClock);
 			</form>
 
 			<div class="panel">
-				<h2>Events</h2>
+				<h2>{t.events}</h2>
 				<ol class="log" data-log></ol>
 			</div>
 		</aside>

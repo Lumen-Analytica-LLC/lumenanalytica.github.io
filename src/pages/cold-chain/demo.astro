@@ -1,39 +1,8 @@
 ---
-import ContactCTA from '../../components/ContactCTA.astro';
-import Hero from '../../components/Hero.astro';
+import DemoPage from '../../components/pages/DemoPage.astro';
 import ColdStorageTwin from '../../components/twin/ColdStorageTwin.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout
-	title="Cold Storage Digital Twin Demo | Lumen Analytica"
-	description="Watch a simulated produce cross-dock run in real time, then change forklift staffing, dock doors, arrival patterns and priorities to see the effect on truck turn time, detention and cold chain exposure."
->
-	<div class="stack gap-20">
-		<main class="wrapper stack gap-8">
-			<Hero
-				title="Every truck, every pallet, before the season hits"
-				tagline="This is a digital twin of a produce cross-dock near the bridge. Reefer trucks arrive in waves, back into the dock, and forklifts race to unload, pre-cool and put away before product warms up. Change the staffing or the rules and the same day replays, so you see exactly what your change would do."
-				align="start"
-			/>
-
-			<ColdStorageTwin />
-
-			<p class="disclaimer">
-				All trucks, loads and inventory are synthetic. Arrival waves, load sizes, inspection rates and pre-cooling times
-				are illustrative; a twin of your facility is calibrated to your own yard, dock and warehouse data. Detention is
-				shown at an assumed $75 per hour after two hours of free time.
-			</p>
-		</main>
-
-		<ContactCTA industry="cold-chain" captureScenario title="Want this for your dock?" />
-	</div>
-</BaseLayout>
-
-<style>
-	.disclaimer {
-		font-size: var(--text-sm);
-		color: var(--gray-400);
-		max-width: 70ch;
-	}
-</style>
+<DemoPage industry="cold-chain">
+	<ColdStorageTwin />
+</DemoPage>

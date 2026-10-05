@@ -1,38 +1,8 @@
 ---
-import ContactCTA from '../../components/ContactCTA.astro';
-import Hero from '../../components/Hero.astro';
+import DemoPage from '../../components/pages/DemoPage.astro';
 import ClinicTwin from '../../components/twin/ClinicTwin.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout
-	title="Clinic Digital Twin Demo | Lumen Analytica"
-	description="Watch a simulated primary care clinic run in real time, then change schedules, staffing and walk-in demand to see the effect on patient wait times and provider availability."
->
-	<div class="stack gap-20">
-		<main class="wrapper stack gap-8">
-			<Hero
-				title="A day in your clinic, before it happens"
-				tagline="This is a digital twin of a typical four-provider primary care clinic. Patients check in, wait, get roomed and see their provider. Change the schedule or staffing and the same day replays, so you see exactly what your change would do."
-				align="start"
-			/>
-
-			<ClinicTwin />
-
-			<p class="disclaimer">
-				All patients and providers are synthetic. Arrival patterns, visit lengths and no-shows are drawn from
-				realistic distributions; a twin of your clinic is calibrated to your own scheduling and visit data.
-			</p>
-		</main>
-
-		<ContactCTA industry="healthcare" captureScenario title="Want this for your clinic?" />
-	</div>
-</BaseLayout>
-
-<style>
-	.disclaimer {
-		font-size: var(--text-sm);
-		color: var(--gray-400);
-		max-width: 70ch;
-	}
-</style>
+<DemoPage industry="healthcare">
+	<ClinicTwin />
+</DemoPage>

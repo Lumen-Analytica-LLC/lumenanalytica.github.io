@@ -1,0 +1,438 @@
+---
+import { CONTACT, FORM_ENDPOINT, INDUSTRIES } from '../../config/contact';
+import { langFromPath, localizePath } from '../../i18n';
+import { CONTACT_PAGE } from '../../i18n/contact-page';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../Hero.astro';
+
+const lang = langFromPath(Astro.url.pathname);
+const t = CONTACT_PAGE[lang];
+const interests = Object.entries(t.interests).map(([value, label]) => ({ value, label }));
+---
+
+<BaseLayout title={t.meta.title} description={t.meta.description}>
+	<main class="wrapper stack gap-8 contact">
+		<Hero title={t.title} tagline={t.tagline} align="start" />
+
+		<div class="layout">
+			<form
+				class="card form"
+				data-contact-form
+				data-endpoint={FORM_ENDPOINT}
+				data-email={CONTACT.email}
+				data-sending={t.sending}
+				data-error={t.error(CONTACT.email)}
+				data-scenario-label={t.scenario}
+				method="post"
+				action={FORM_ENDPOINT || `mailto:${CONTACT.email}`}
+				enctype={FORM_ENDPOINT ? undefined : 'text/plain'}
+			>
+				<div class="grid">
+					<label class="field">
+						<span>{t.fields.name}</span>
+						<input name="name" autocomplete="name" required />
+					</label>
+					<label class="field">
+						<span>{t.fields.email}</span>
+						<input name="email" type="email" autocomplete="email" required />
+					</label>
+					<label class="field">
+						<span>{t.fields.organization}</span>
+						<input name="organization" autocomplete="organization" required />
+					</label>
+					<label class="field">
+						<span>{t.fields.role} <span class="optional">{t.fields.optional}</span></span>
+						<input name="role" autocomplete="organization-title" />
+					</label>
+					<label class="field">
+						<span>{t.fields.industry}</span>
+						<select name="industry" required>
+							{Object.entries(INDUSTRIES[lang]).map(([value, label]) => <option value={value}>{label}</option>)}
+						</select>
+					</label>
+					<label class="field">
+						<span>{t.fields.location}</span>
+						<select name="location">
+							{t.locations.map((location) => <option>{location}</option>)}
+						</select>
+					</label>
+				</div>
+
+				<fieldset class="field">
+					<legend>{t.fields.interest}</legend>
+					<div class="choices">
+						{
+							interests.map((interest, i) => (
+								<label class="choice">
+									<input type="radio" name="interest" value={interest.value} checked={i === 0} />
+									<span>{interest.label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<label class="field">
+					<span>{t.fields.message}</span>
+					<textarea name="message" rows="5" required placeholder={t.fields.placeholder}></textarea>
+				</label>
+
+				<div class="attached" data-attached hidden>
+					<div class="attached-header">
+						<strong>{t.attached}</strong>
+						<button type="button" class="link-button" data-remove-attached>{t.remove}</button>
+					</div>
+					<pre data-attached-text></pre>
+				</div>
+
+				<input type="hidden" name="details" data-details />
+				<input type="hidden" name="scenario" data-scenario />
+				<input type="hidden" name="_subject" value={t.subject} />
+				<input type="hidden" name="language" value={lang} />
+				<!-- Spam trap: people never see or fill this. -->
+				<input type="text" name="_gotcha" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+				<div class="submit-row">
+					<button type="submit" class="submit" data-submit>{t.send}</button>
+					<p class="status" data-status role="status" aria-live="polite"></p>
+				</div>
+			</form>
+
+			<div class="thanks card" data-thanks hidden tabindex="-1">
+				<h2>{t.thanks.title}</h2>
+				<p>{t.thanks.body}</p>
+				<ul>
+					<li><a href={localizePath('/healthcare/demo/', lang)}>{t.thanks.clinic}</a></li>
+					<li><a href={localizePath('/cold-chain/demo/', lang)}>{t.thanks.cold}</a></li>
+				</ul>
+			</div>
+
+			<aside class="side stack gap-4">
+				{
+					CONTACT.bookingUrl && (
+						<div class="card">
+							<h2>{t.book.title}</h2>
+							<p>{t.book.body}</p>
+							<a class="submit" href={CONTACT.bookingUrl} target="_blank" rel="noopener">
+								{t.book.cta}
+							</a>
+						</div>
+					)
+				}
+				<div class="card">
+					<h2>{t.next.title}</h2>
+					<ol class="steps">
+						{t.next.steps.map((step) => <li>{step}</li>)}
+					</ol>
+				</div>
+				<p class="email">{t.orEmail} <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
+			</aside>
+		</div>
+	</main>
+</BaseLayout>
+
+<script>
+	import { HANDOFF_KEY, type ContactHandoff, INDUSTRIES } from '../../config/contact';
+
+	const form = document.querySelector<HTMLFormElement>('[data-contact-form]')!;
+	const status = form.querySelector<HTMLElement>('[data-status]')!;
+	const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+	const attached = form.querySelector<HTMLElement>('[data-attached]')!;
+	const details = form.querySelector<HTMLInputElement>('[data-details]')!;
+	const scenario = form.querySelector<HTMLInputElement>('[data-scenario]')!;
+	const thanks = document.querySelector<HTMLElement>('[data-thanks]')!;
+	const endpoint = form.dataset.endpoint;
+
+	// Pre-fill from the link (industry) and from anything the ROI calculator or a demo handed over.
+	const params = new URLSearchParams(location.search);
+	const industry = params.get('industry');
+	if (industry && industry in INDUSTRIES.en) (form.elements.namedItem('industry') as HTMLSelectElement).value = industry;
+
+	let handoff: ContactHandoff = {};
+	try {
+		handoff = JSON.parse(sessionStorage.getItem(HANDOFF_KEY) ?? '{}');
+	} catch {
+		handoff = {};
+	}
+	if (handoff.summary || handoff.scenario) {
+		details.value = handoff.summary ?? '';
+		scenario.value = handoff.scenario ?? '';
+		attached.querySelector('[data-attached-text]')!.textContent = [handoff.summary, handoff.scenario && `${form.dataset.scenarioLabel}: ${handoff.scenario}`]
+			.filter(Boolean)
+			.join('\n\n');
+		attached.hidden = false;
+	}
+	form.querySelector('[data-remove-attached]')!.addEventListener('click', () => {
+		details.value = '';
+		scenario.value = '';
+		attached.hidden = true;
+		clearHandoff();
+	});
+
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		if (!form.reportValidity()) return;
+		const data = new FormData(form);
+
+		// No form service configured yet: open an email with the same details instead.
+		if (!endpoint) {
+			const body = [...data.entries()]
+				.filter(([key, value]) => !key.startsWith('_') && String(value).trim())
+				.map(([key, value]) => `${key}: ${value}`)
+				.join('\n');
+			location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Inquiry from lumenanalytica.io')}&body=${encodeURIComponent(body)}`;
+			return;
+		}
+
+		submit.disabled = true;
+		status.textContent = form.dataset.sending ?? '';
+		try {
+			const response = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+			if (!response.ok) throw new Error(String(response.status));
+			clearHandoff();
+			form.hidden = true;
+			thanks.hidden = false;
+			thanks.focus();
+		} catch {
+			status.textContent = form.dataset.error ?? '';
+			submit.disabled = false;
+		}
+	});
+
+	function clearHandoff(): void {
+		try {
+			sessionStorage.removeItem(HANDOFF_KEY);
+		} catch {
+			// Storage unavailable (private mode, blocked): nothing to clear.
+		}
+	}
+</script>
+
+<style>
+	.contact {
+		padding-bottom: 5rem;
+	}
+
+	.layout {
+		display: grid;
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.card {
+		padding: 1.5rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 1.5rem;
+		background: var(--gradient-subtle);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.card h2 {
+		font-size: var(--text-lg);
+		color: var(--gray-0);
+		margin-bottom: 0.5rem;
+	}
+
+	.card p,
+	.steps {
+		color: var(--gray-300);
+	}
+
+	.form {
+		display: grid;
+		gap: 1.25rem;
+	}
+
+	.grid {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.field {
+		display: grid;
+		gap: 0.4rem;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--gray-100);
+	}
+
+	.field legend {
+		padding: 0;
+		margin-bottom: 0.4rem;
+	}
+
+	.optional {
+		font-weight: 400;
+		color: var(--gray-400);
+	}
+
+	input:not([type='radio']),
+	select,
+	textarea {
+		width: 100%;
+		border: 1px solid var(--gray-800);
+		border-radius: 0.6rem;
+		background: var(--gray-999);
+		color: var(--gray-0);
+		font: inherit;
+		font-weight: 400;
+		padding: 0.6rem 0.75rem;
+	}
+
+	input:focus-visible,
+	select:focus-visible,
+	textarea:focus-visible {
+		outline: 2px solid var(--accent-overlay);
+		border-color: var(--accent-regular);
+	}
+
+	textarea {
+		resize: vertical;
+	}
+
+	.choices {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.choice {
+		display: flex;
+		gap: 0.6rem;
+		align-items: center;
+		font-weight: 400;
+		color: var(--gray-200);
+	}
+
+	.choice input {
+		accent-color: var(--accent-regular);
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.attached {
+		padding: 1rem;
+		border-radius: 0.75rem;
+		border: 1px dashed var(--accent-regular);
+		background: var(--gray-999);
+		font-size: var(--text-sm);
+	}
+
+	.attached[hidden],
+	.thanks[hidden],
+	.form[hidden] {
+		display: none;
+	}
+
+	.attached-header {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+		color: var(--gray-0);
+	}
+
+	.attached pre {
+		margin: 0;
+		white-space: pre-wrap;
+		font: inherit;
+		color: var(--gray-300);
+	}
+
+	.link-button {
+		background: none;
+		border: 0;
+		padding: 0;
+		color: var(--accent-dark);
+		font: inherit;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.trap {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+	}
+
+	.submit-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.submit {
+		display: inline-block;
+		padding: 0.7rem 1.6rem;
+		border: 0;
+		border-radius: 999rem;
+		background: var(--accent-regular);
+		color: var(--accent-text-over);
+		font: inherit;
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.submit:hover {
+		filter: brightness(1.15);
+	}
+
+	.submit:disabled {
+		opacity: 0.6;
+		cursor: progress;
+	}
+
+	.status {
+		font-size: var(--text-sm);
+		color: var(--gray-300);
+	}
+
+	.steps {
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.thanks ul {
+		margin-top: 0.75rem;
+		padding-left: 1.2rem;
+	}
+
+	.thanks a,
+	.email a {
+		color: var(--accent-dark);
+		font-weight: 600;
+	}
+
+	.email {
+		font-size: var(--text-sm);
+		color: var(--gray-400);
+		padding-inline: 0.5rem;
+	}
+
+	@media (min-width: 40em) {
+		.grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 64em) {
+		.layout {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		}
+
+		.thanks {
+			grid-column: 1;
+		}
+
+		.side {
+			grid-column: 2;
+			grid-row: 1;
+		}
+	}
+</style>

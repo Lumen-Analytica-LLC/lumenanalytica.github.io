@@ -1,0 +1,156 @@
+---
+import { bookingHref } from '../../config/contact';
+import { langFromPath, localizePath, UI } from '../../i18n';
+import type { LandingContent } from '../../i18n/landing';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/industry.css';
+import CallToAction from '../CallToAction.astro';
+import Icon from '../Icon.astro';
+import RoiCalculator from '../twin/RoiCalculator.astro';
+import TwinPreview from '../twin/TwinPreview.astro';
+
+interface Props {
+	content: LandingContent;
+	industry: 'healthcare' | 'cold-chain';
+}
+
+const { content: c, industry } = Astro.props;
+const lang = langFromPath(Astro.url.pathname);
+const assessmentHref = bookingHref(industry, 'landing', lang);
+const demoHref = localizePath(`/${industry}/demo/`, lang);
+// The twin scenario (and its ROI model) for this industry.
+const roiModel = industry === 'healthcare' ? 'clinic' : 'cold-chain';
+---
+
+<BaseLayout title={c.meta.title} description={c.meta.description}>
+	<div class="industry stack gap-20 lg:gap-48">
+		<header class="wrapper hero">
+			<div class="hero-copy stack gap-8">
+				<p class="eyebrow">{c.eyebrow}</p>
+				<h1>{c.h1}</h1>
+				<p class="lede">{c.lede}</p>
+				<div class="actions">
+					<CallToAction href={demoHref}>
+						{c.ctaDemo}
+						<Icon icon="arrow-right" size="1.2em" />
+					</CallToAction>
+					<a class="secondary" href={assessmentHref}>{c.ctaAssessment}</a>
+				</div>
+			</div>
+			<TwinPreview scenario={roiModel} />
+		</header>
+
+		<main class="wrapper stack gap-20 lg:gap-48">
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.problems.title}</h2>
+					<p>{c.problems.intro}</p>
+				</header>
+				<ul class="cards cards-4">
+					{
+						c.problems.items.map((problem) => (
+							<li class="card">
+								<h3>{problem.title}</h3>
+								<p>{problem.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.steps.title}</h2>
+					<p>{c.steps.intro}</p>
+				</header>
+				<ol class="cards cards-3 steps">
+					{
+						c.steps.items.map((step, i) => (
+							<li class="card">
+								<span class="step-number">{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.body}</p>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.scenarios.title}</h2>
+					<p>{c.scenarios.intro}</p>
+				</header>
+				<ul class="scenarios">
+					{
+						c.scenarios.items.map((scenario) => (
+							<li>
+								<a href={localizePath(scenario.href, lang)}>
+									<span>{scenario.question}</span>
+									<Icon icon="arrow-right" size="1.1em" />
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			<section class="section" id="roi">
+				<header class="section-header">
+					<h2>{c.roi.title}</h2>
+					<p>{c.roi.intro}</p>
+				</header>
+				<RoiCalculator model={roiModel} />
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.pilot.title}</h2>
+					<p>{c.pilot.intro}</p>
+				</header>
+				<ol class="timeline">
+					{
+						c.pilot.items.map((item) => (
+							<li class="card">
+								<span class="week">{item.week}</span>
+								<h3>{item.title}</h3>
+								<p>{item.body}</p>
+							</li>
+						))
+					}
+				</ol>
+				<a class="pilot-link" href={localizePath('/pilot/', lang)}>
+					{UI[lang].pilotDetails} <Icon icon="arrow-right" size="1em" />
+				</a>
+			</section>
+
+			<section class="section">
+				<header class="section-header">
+					<h2>{c.faqs.title}</h2>
+				</header>
+				<div class="faqs">
+					{
+						c.faqs.items.map((faq) => (
+							<details>
+								<summary>{faq.q}</summary>
+								<p>{faq.a}</p>
+							</details>
+						))
+					}
+				</div>
+			</section>
+		</main>
+
+		<aside class="closing">
+			<h2>{c.closing.title}</h2>
+			<p>{c.closing.body}</p>
+			<div class="actions">
+				<CallToAction href={assessmentHref}>
+					{c.ctaAssessment}
+					<Icon icon="paper-plane-tilt" size="1.2em" />
+				</CallToAction>
+				<a class="secondary" href={demoHref}>{c.closing.demo}</a>
+			</div>
+		</aside>
+	</div>
+</BaseLayout>

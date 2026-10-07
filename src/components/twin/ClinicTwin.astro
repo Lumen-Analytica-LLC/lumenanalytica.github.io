@@ -1,0 +1,190 @@
+---
+import '../../twin/twin-theme.css';
+import '../../twin/twin-ui.css';
+import { langFromPath } from '../../i18n';
+import { CLINIC_TEXT } from '../../i18n/twins';
+import { DEFAULT_CONFIG, DISRUPTION_WINDOW, formatClock, MAX_PROVIDERS, MAX_ROOMS, OPEN, TEMPLATES } from '../../twin/scenarios/clinic/model';
+
+const lang = langFromPath(Astro.url.pathname);
+const t = CLINIC_TEXT[lang];
+
+const speeds = [
+	{ value: 3, label: '3×' },
+	{ value: 8, label: '8×' },
+	{ value: 15, label: '15×' },
+	{ value: 30, label: '30×' },
+];
+const defaultSpeed = 8;
+
+const kpis = Object.entries(t.kpis).map(([key, label]) => ({ key, label }));
+
+const legend = [
+	{ token: 'ok', label: t.legend.ok },
+	{ token: 'warn', label: t.legend.warn },
+	{ token: 'bad', label: t.legend.bad },
+	{ token: 'seen', label: t.legend.seen },
+	{ token: 'provider', label: t.legend.provider },
+	{ token: 'assistant', label: t.legend.assistant },
+	{ token: 'clerk', label: t.legend.clerk },
+];
+
+const roomLegend = [
+	{ token: 'rooming', label: t.legend.rooming },
+	{ token: 'ready', label: t.legend.ready },
+	{ token: 'visit', label: t.legend.visit },
+	{ token: 'cleaning', label: t.legend.cleaning },
+];
+
+const [awayStart, awayEnd] = DISRUPTION_WINDOW.map((time) => formatClock(time, lang));
+---
+
+<section class="twin twin-theme" data-clinic-twin data-lang={lang} aria-label={t.aria}>
+	<div class="toolbar">
+		<div class="clock">
+			<span class="clock-label">{t.clockLabel}</span>
+			<span class="clock-value" data-clock>{formatClock(OPEN, lang)}</span>
+		</div>
+		<div class="transport">
+			<button type="button" class="btn btn-primary" data-play aria-pressed="true">
+				<span data-label>{t.pause}</span>
+			</button>
+			<button type="button" class="btn" data-restart>{t.restart}</button>
+			<button type="button" class="btn" data-new-day title={t.newDayTitle}>{t.newDay}</button>
+		</div>
+	</div>
+
+	<div class="layout">
+		<div class="stage">
+			<div class="floor-wrap">
+				<canvas data-floor role="img" aria-label={t.floorAria}></canvas>
+			</div>
+			<ul class="legend" aria-label={t.legend.people}>
+				{
+					legend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token})`} />
+							{item.label}
+						</li>
+					))
+				}
+			</ul>
+			<ul class="legend legend-rooms" aria-label={t.legend.roomTitle}>
+				<li class="legend-title">{t.legend.roomTitle}</li>
+				{
+					roomLegend.map((item) => (
+						<li>
+							<span class="swatch" style={`background: var(--twin-${item.token})`} />
+							{item.label}
+						</li>
+					))
+				}
+			</ul>
+
+			<div class="panel">
+				<header class="panel-header">
+					<h2>{t.board.title}</h2>
+					<ul class="legend legend-inline">
+						<li><span class="swatch swatch-booked"></span>{t.board.booked}</li>
+						<li><span class="swatch" style="background: var(--twin-visit)"></span>{t.board.visit}</li>
+						<li><span class="swatch swatch-charting"></span>{t.board.charting}</li>
+						<li><span class="swatch swatch-away"></span>{t.board.away}</li>
+					</ul>
+				</header>
+				<canvas data-board class="board" role="img" aria-label={t.boardAria}></canvas>
+			</div>
+		</div>
+
+		<aside class="side">
+			<div class="kpis" aria-live="off">
+				{
+					kpis.map((kpi) => (
+						<div class="kpi" data-kpi={kpi.key} data-tone="neutral">
+							<span class="kpi-label">{kpi.label}</span>
+							<span class="kpi-value" data-value>–</span>
+							<span class="kpi-sub" data-sub />
+						</div>
+					))
+				}
+			</div>
+
+			<div class="summary" data-summary role="status" hidden>
+				<strong>{t.dayComplete}</strong>
+				<span data-summary-text></span>
+			</div>
+
+			<form class="panel controls" data-controls>
+				<h2>{t.whatIf}</h2>
+				<p class="hint">{t.hint}</p>
+
+				<label class="field">
+					<span class="field-row"><span>{t.controls.providers}</span><output for="ct-providers"></output></span>
+					<input id="ct-providers" name="providers" type="range" min="2" max={MAX_PROVIDERS} step="1" value={DEFAULT_CONFIG.providers} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>{t.controls.rooms}</span><output for="ct-rooms"></output></span>
+					<input id="ct-rooms" name="rooms" type="range" min="3" max={MAX_ROOMS} step="1" value={DEFAULT_CONFIG.rooms} />
+				</label>
+
+				<fieldset class="field">
+					<legend>{t.controls.template}</legend>
+					<div class="segmented">
+						{
+							Object.keys(TEMPLATES).map((value) => (
+								<label>
+									<input type="radio" name="template" value={value} checked={value === DEFAULT_CONFIG.template} />
+									<span>{t.templates[value as keyof typeof t.templates]}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+
+				<label class="field">
+					<span class="field-row"><span>{t.controls.doubleBook}</span><output for="ct-db" data-suffix="%"></output></span>
+					<input id="ct-db" name="doubleBookPct" type="range" min="0" max="30" step="5" value={DEFAULT_CONFIG.doubleBookPct} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>{t.controls.noShow}</span><output for="ct-ns" data-suffix="%"></output></span>
+					<input id="ct-ns" name="noShowPct" type="range" min="0" max="30" step="2" value={DEFAULT_CONFIG.noShowPct} />
+				</label>
+
+				<label class="field">
+					<span class="field-row"><span>{t.controls.walkIns}</span><output for="ct-wi"></output></span>
+					<input id="ct-wi" name="walkInsPerHour" type="range" min="0" max="6" step="0.5" value={DEFAULT_CONFIG.walkInsPerHour} />
+				</label>
+
+				<label class="check">
+					<input name="disruption" type="checkbox" checked={DEFAULT_CONFIG.disruption} />
+					<span>{t.controls.disruption(awayStart, awayEnd)}</span>
+				</label>
+
+				<fieldset class="field">
+					<legend>{t.speed}</legend>
+					<div class="segmented">
+						{
+							speeds.map((speed) => (
+								<label>
+									<input type="radio" name="speed" value={speed.value} checked={speed.value === defaultSpeed} />
+									<span>{speed.label}</span>
+								</label>
+							))
+						}
+					</div>
+				</fieldset>
+			</form>
+
+			<div class="panel">
+				<h2>{t.events}</h2>
+				<ol class="log" data-log></ol>
+			</div>
+		</aside>
+	</div>
+</section>
+
+<script>
+	import { mountClinicTwin } from '../../twin/scenarios/clinic/app';
+
+	for (const root of document.querySelectorAll<HTMLElement>('[data-clinic-twin]')) mountClinicTwin(root);
+</script>
